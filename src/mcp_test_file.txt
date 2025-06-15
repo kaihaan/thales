@@ -1,0 +1,2 @@
+Hello from MCP filesystem test!
+This file was created by the test script.

@@ -1,0 +1,59 @@
+# Cline Rules for MCP Learning Project
+
+## Project Intelligence
+
+### Critical Implementation Paths
+
+- **MCP Client Development**: Use `AsyncExitStack` for resource management - essential for proper cleanup
+- **Windows Asyncio**: Subprocess cleanup requires explicit delays (`await asyncio.sleep(0.1)`) before final cleanup
+- **Configuration Management**: Dataclass pattern with centralized registry works excellently for MCP servers
+- **Testing Strategy**: Integration tests more valuable than unit tests for MCP validation
+
+### User Preferences & Workflow
+
+- **Memory Bank First**: Always read memory bank files at start of sessions for context
+- **Progressive Implementation**: User prefers building complexity gradually (Cline → Config → Client → Tests)
+- **Educational Focus**: Dual perspective learning (user + developer) is core to project value
+- **Self-Implementation**: User handles all coding, wants guidance and architecture advice
+
+### Project-Specific Patterns
+
+- **File Structure**: `thales/src/thales/mcp/` for all MCP components
+- **Import Patterns**: Use absolute imports with full module paths for reliability
+- **Error Handling**: Explicit exception handling with logging integration preferred
+- **Method Naming**: Standardize on `connect()` not `connect_to_server()` for consistency
+
+### Known Challenges
+
+- **Asyncio Cleanup**: Windows ProactorEventLoop requires careful subprocess cleanup sequence
+- **Path Handling**: Use absolute paths for server configurations to avoid import issues
+- **Test Artifacts**: Always clean up test files (`mcp_test_file.txt`) in test teardown
+- **Resource Management**: Use context managers (`async with`) for all async resources
+
+### Tool Usage Patterns
+
+- **MCP SDK**: Official Python SDK (`pip install mcp`) works well
+- **Logging**: Custom logger at `thales.utils.logger.logger` integrated throughout
+- **Configuration**: Centralized in `mcp_config.py` with dataclass patterns
+- **Testing**: Run from `thales/src/` directory with `python -m thales.mcp.tests.test_*`
+
+### Evolution of Project Decisions
+
+- **Started**: Simple Cline integration for immediate value
+- **Evolved**: Centralized configuration system for maintainability
+- **Current**: Custom client with multi-server support and comprehensive testing
+- **Next**: Focus on cleanup polish and documentation
+
+### Critical Success Factors
+
+- **Dual Integration**: Both Cline (user perspective) and custom client (developer perspective)
+- **Real Servers**: Use actual filesystem and math servers, not mocks
+- **Comprehensive Testing**: End-to-end validation more important than unit coverage
+- **Memory Bank**: Documentation-first approach enables session continuity
+
+## Development Environment Notes
+
+- **Platform**: Windows 10 with PowerShell 7
+- **Python**: 3.12.9 in virtual environment `(env)`
+- **Working Directory**: Always `thales/src/` for module imports
+- **Key Dependencies**: `mcp`, `python-dotenv`, custom logger utilities

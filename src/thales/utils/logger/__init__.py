@@ -1,0 +1,1 @@
+from thales.utils.logger.logger import logger
