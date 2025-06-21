@@ -2,21 +2,19 @@
 test script for EnhancedMCPClient
 """
 
-import sys, os
-
-from thales.mcp.server.mcp_config import MCPConfigManager, MCPServerConfig
+from thales.mcp.server import MCPServerManager, MCPServerConfig
 
 def test_config_manager():
-    """ Test MCPConfigManager """
+    """ Test MCPServerManager """
     print("🧪 Testing MCP Configuration Manager")
     print("=" * 50)
 
     # init config manager
-    config_manager = MCPConfigManager()
+    config_manager = MCPServerManager()
 
     # Test 1: List available servers
     print("\n📋 Available Servers:")
-    servers = config_manager.list_servers()
+    servers = config_manager.list_configured_servers()
     for name, config in servers.items():
         print(f"  ✅ {name}: {config.description}")
         print(f"     Command: {config.command}")

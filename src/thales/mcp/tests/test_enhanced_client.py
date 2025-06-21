@@ -142,7 +142,7 @@ class MCPToolTester:
         
         # Show available servers
         print("Available servers:")
-        for name, config in self.client.config_manager.list_servers().items():
+        for name, config in self.client.config_manager.list_connected_servers().items():
             status = "🟢 Connected" if name in self.client.sessions else "⚪ Available"
             print(f"  {status} {name}: {config.description}")
 

@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "thales"
+version = "0.1.0"
+description = "Implementation of MCP Client and Server Components"
+authors = [{ name = "K", email = "iam@kaihaan.com" }]
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Development Status :: 3 - Alpha",
+]
+dependencies = [
+    "mcp >=0.1.0",
+    "python-dotenv >=1.0.0",
+    "loguru >=0.7.0",
+    "pydantic >=2.0.0",
+    "typing-extensions >=4.0.0",
+]
+
+[project.scripts]
+thales-client = "thales.mcp.client.client:main"
+thales-math-server = "thales.mcp.server.math_server:main"
+
+[tool.hatch.build]
+packages = ["src/thales"]
+
+[tool.hatch.envs.default]
+dependencies = [
+    "black>=23.0.0",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.20.0",
+    "pytest-cov>=4.0.0",
+    "mypy>=1.0.0",
+    "hatch-vcs>=0.3.0",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest --verbose --cov=thales --cov-report=html src/thales/mcp/tests"
+lint = "black --check --diff src"
+format = "black src"
+typecheck = "mypy src"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "--verbose --cov=thales --cov-report=html"
+testpaths = ["src/thales/mcp/tests"]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+show_error_codes = true

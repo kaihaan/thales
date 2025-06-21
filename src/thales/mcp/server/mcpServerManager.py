@@ -16,7 +16,7 @@ class MCPServerConfig:
     description: str = ""
 
 
-class MCPConfigManager:
+class MCPServerManager:
     """class to manage registry of MCP Server configuration settings"""
 
     def __init__(self):
@@ -46,7 +46,7 @@ class MCPConfigManager:
             )
         return self.servers[name]
 
-    def list_servers(self) -> List[MCPServerConfig]:
+    def list_configured_servers(self) -> dict[str, MCPServerConfig]:
         return self.servers.copy()
 
     def add_server(self, config: MCPServerConfig) -> bool:

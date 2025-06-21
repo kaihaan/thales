@@ -1,5 +1,14 @@
 """
 mcp client
+
+Usage:
+    - connect_to_server(self, server_name: str) -> None
+    - disconnect_server(self, server_name: str) -> None
+    - list_connected_servers(self) -> None
+    - list_connected_tools(self) -> ListToolsResult | None
+    - execute_tool(self, server_name: str, tool_name: str, args: Dict[str, Any]) -> CallToolResult
+    - interactive_mode(self) -> None
+
 """
 
 import asyncio
@@ -10,15 +19,42 @@ from typing import Optional, Dict, Any
 from contextlib import AsyncExitStack
 
 from mcp import ClientSession, StdioServerParameters
+# import mcp.types as types
+from mcp.types import ListToolsResult, CallToolResult, Tool
 from mcp.client.stdio import stdio_client
 # from anthropic import Anthropic
 from dotenv import load_dotenv
 
-from thales.mcp.server.mcp_config import MCPConfigManager, MCPServerConfig
-from thales.utils.logger.logger import logger
+from thales.mcp.server import MCPServerManager, MCPServerConfig
+from thales.utils.logger import logger
 
 load_dotenv()
 
+
+"""
+class ListToolsResult(PaginatedResult):
+    tools: list[Tool]
+
+
+class Tool(BaseModel):
+    name: str
+    description: str | None = None
+    inputSchema: dict[str, Any]
+    annotations: ToolAnnotations | None = None
+
+e.g.    {
+  name: "execute_command",
+  description: "Run a shell command",
+  inputSchema: {
+    type: "object",
+    properties: {
+      command: { type: "string" },
+      args: { type: "array", items: { type: "string" } }
+    }
+  }
+}
+    
+    """
 
 class EnhancedMCPClient:
     """
@@ -32,7 +68,7 @@ class EnhancedMCPClient:
         self.sessions: Dict[str, ClientSession] = {}
         self.exit_stack = AsyncExitStack()
         #self.anthropic = Anthropic()
-        self.config_manager = MCPConfigManager()
+        self.server_manager = MCPServerManager()
         self.active_servers: Dict[str, MCPServerConfig] = {}
 
         # for debugging
@@ -40,7 +76,7 @@ class EnhancedMCPClient:
         logger.debug("Enhanced MCP Client Initialised")
         logger.debug(f"Current directory {current_dir}")
 
-    async def connect(self, server_name: str):
+    async def connect_to_server(self, server_name: str) -> None:
         """Connect to an MCP Server
 
         Args:
@@ -50,7 +86,7 @@ class EnhancedMCPClient:
             logger.debug(f"Already connected to {server_name}")
             return
 
-        config = self.config_manager.get_server(server_name)
+        config = self.server_manager.get_server(server_name)
         logger.debug(f"Connecting to {config.name}: {config.description}")
 
         server_params = StdioServerParameters(
@@ -90,7 +126,7 @@ class EnhancedMCPClient:
             logger.debug(f"❌ Failed to connect to server {server_name}")
             raise
 
-    async def disconnect(self, server_name: str):
+    async def disconnect_server(self, server_name: str) -> None:
         """Disconnect from specified MCP server"""
         if server_name not in self.sessions:
             logger.debug(f"Not connected to {server_name}")
@@ -100,27 +136,47 @@ class EnhancedMCPClient:
         del self.active_servers[server_name]
         logger.debug(f"Disconnected from {server_name}")
 
-    async def list_servers(self):
+
+    async def list_connected_servers(self) -> Dict[str, MCPServerConfig]:
+        """list all connected servers"""
+        for name, config in self.active_servers.items():
+            logger.debug(f"\n🔗 {name}: {config.description}")
+
+        return self.active_servers
+
+    
+    async def list_connected_tools(self, requested_server_name: str | None = None) -> ListToolsResult | None:
         """list all connected servers and their tools"""
         if not self.sessions:
             logger.debug("No active server sessions")
             return
 
-        for server_name, session in self.sessions:
+        found = ListToolsResult(tools=[])
+
+        for server_name, session in self.sessions.items():
+
+            if  requested_server_name and server_name != requested_server_name:
+                print(f"Searching for tools for x1 server: {requested_server_name}")
+                continue
+
             config = self.active_servers[server_name]
-            logger.debug(f"\n🔗 {server_name}: {config.description}")
+            print(f"\n🔗 {server_name}: {config.description}")
 
             try:
                 res = await session.list_tools()
-                tools = res.tools
-                for tool in tools:
-                    logger.debug(f"🔧 {tool.name}: {tool.description}")
+                found.tools.extend(res.tools)
+
             except Exception as e:
                 logger.debug(f"❌ Error listing tools: {e}")
 
+        for tool in found.tools:
+            print(f"🔧 {tool.name}: {tool.description}")
+        
+        return found if found.tools else None
+
     async def execute_tool(
-        self, server_name: str, tool_name: str, args: Dict[str, Any]
-    ):
+        self, server_name: str, tool_name: str, args: dict[str, Any],
+    ) -> CallToolResult:
         """Execute a tool on a specific server"""
         if server_name not in self.sessions:
             logger.debug(
@@ -130,22 +186,28 @@ class EnhancedMCPClient:
 
         session = self.sessions[server_name]
         try:
+            print(f"Calling {tool_name} on server {server_name}")
+            print(f"With args: {args}")
             result = await session.call_tool(tool_name, args)
             return result
         except Exception as e:
             logger.debug(f"Error executing tool {tool_name} on server {server_name} : {e}")
             raise
 
-    async def interactive_mode(self):
+    async def interactive_mode(self) -> None:
         """Interactive mode for testing servers"""
-        print("\n🚀 Enhanced MCP Client - Interactive Mode")
-        print("Commands:")
-        print("  connect <server_name>  - Connect to a server")
-        print("  disconnect <server_name> - Disconnect from a server")
-        print("  list                   - List connected servers")
-        print("  servers               - Show available servers")
-        print("  tool <server> <tool> <args> - Execute a tool")
-        print("  quit                  - Exit")
+
+        instructions = """🚀 Enhanced MCP Client - Interactive Mode
+Commands:
+- servers                            - Show available servers
+- connect <server_name>              - Connect to a server
+- disconnect <server_name>           - Disconnect from a server
+- tools <server_name>                - List tools
+- execute <server> <tool> <arg=val>  - Execute a tool
+- help                               - Show this list
+- quit                               - Exit"""
+
+        print(instructions)
 
         while True:
             try:
@@ -153,37 +215,51 @@ class EnhancedMCPClient:
                 if not command:
                     continue
 
-                cmd = command[0].lower()
+                match command[0].lower():
+                    case "quit":
+                        break
 
-                if cmd == "quit":
-                    break
-                elif cmd == "connect" and len(command) > 1:
-                    await self.connect_to_server(command[1])
-                elif cmd == "disconnect" and len(command) > 1:
-                    await self.disconnect_server(command[1])
-                elif cmd == "list":
-                    await self.list_connected_servers()
-                elif cmd == "servers":
-                    print("\nAvailable servers:")
-                    for name, config in self.config_manager.list_servers().items():
-                        status = "🟢 Connected" if name in self.sessions else "⚪ Available"
-                        print(f"  {status} {name}: {config.description}")
-                elif cmd == "tool" and len(command) >= 3:
-                    server_name = command[1]
-                    tool_name = command[2]
-                    # Simple args parsing - in real implementation, you'd want JSON
-                    args = {}
-                    if len(command) > 3:
-                        # Basic key=value parsing
-                        for arg in command[3:]:
-                            if "=" in arg:
-                                key, value = arg.split("=", 1)
-                                args[key] = value
-                    
-                    result = await self.execute_tool(server_name, tool_name, args)
-                    print(f"Result: {result}")
-                else:
-                    print("Unknown command or missing arguments")
+                    case "connect":
+                        if len(command) > 1:
+                            await self.connect_to_server(command[1])
+
+                    case "disconnect":
+                        if len(command) > 1:
+                            await self.disconnect_server(command[1])
+                
+                    case "servers":
+                        for name, config in self.server_manager.list_configured_servers().items():
+                            status = "🟢 Connected" if name in self.sessions else "⚪ Available"
+                            print(f"  {status} {name}: {config.description}")
+
+                    case "execute":
+                        if len(command) >= 3:  # <server> <tool> <args>
+                            server_name = command[1]
+                            tool_name = command[2]
+                            # Simple args parsing - in real implementation, you'd want JSON
+                            args = {}
+                            if len(command) > 3:
+                                # Basic key=value parsing
+                                for arg in command[3:]:
+                                    if "=" in arg:
+                                        key, value = arg.split("=", 1)
+                                        args[key] = value
+                            
+                            meta, content, isError = await self.execute_tool(server_name, tool_name, args)
+                            print(content[1][0].text)
+                            # for msg in content:
+                            #     print(f"Result: {msg}")
+                        else:
+                            print("Must be in form: execute <server> <tool> <args>")
+
+                    case "tools":
+                        if len(command) == 2:
+                            await self.list_connected_tools(command[1])
+                        else:
+                            await self.list_connected_tools()
+
+                    case "help":
+                        print(instructions)
 
             except KeyboardInterrupt:
                 break
@@ -200,7 +276,7 @@ async def main():
         server_name = sys.argv[1]
         client = EnhancedMCPClient()
         try:
-            await client.connect(server_name=server_name)
+            await client.connect_to_server(server_name=server_name)
             await client.interactive_mode()
         finally:
             await client.cleanup()
@@ -212,6 +288,5 @@ async def main():
         finally:
             await client.cleanup()
 
-if __name__ == "main":
+if __name__ == "__main__":
     asyncio.run(main())
-
