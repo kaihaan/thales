@@ -1,8 +1,8 @@
 """Agent Ontology Package"""
 
 from .identity import AgentIdentity, AgentType, CommunicationStyle, DecisionStyle
-from .goals import Goal, GoalType, GoalStatus, TimeConstraint
-from .tasks import Task, TaskType, TaskStatus, RetryPolicy
+from .goalsClasses import Goal, GoalType, GoalStatus, TimeConstraint
+from .tasksClasses import Task, TaskType, TaskStatus, RetryPolicy
 from .ontology import AgentOntology
 
 __all__ = [

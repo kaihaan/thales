@@ -71,6 +71,7 @@ class Task:
     duration: Optional[timedelta] = None
     
     # Execution tracking
+    tool_used: Optional[str] = None
     attempts: int = 0
     max_attempts: int = 3
     last_error: Optional[str] = None

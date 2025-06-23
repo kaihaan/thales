@@ -54,7 +54,7 @@ class AgentIdentity:
     
     # Specialization
     domain_expertise: List[str] = field(default_factory=list)
-    preferred_tools: List[str] = field(default_factory=list)
+    preferred_mcp_servers: List[str] = field(default_factory=list)
     operating_constraints: List[str] = field(default_factory=list)
     
     def get_trait(self, trait_name: str) -> float:

@@ -2,10 +2,10 @@
 mcp client
 
 Usage:
-    - connect_to_server(self, server_name: str) -> None
-    - disconnect_server(self, server_name: str) -> None
-    - list_connected_servers(self) -> None
-    - list_connected_tools(self) -> ListToolsResult | None
+    - connect(self, server_name: str) -> None
+    - disconnect(self, server_name: str) -> None
+    - list_servers(self) -> Dict[str, MCPServerConfig]
+    - list_tools(self, server_name: str | None = None) -> ListToolsResult | None
     - execute_tool(self, server_name: str, tool_name: str, args: Dict[str, Any]) -> CallToolResult
     - interactive_mode(self) -> None
 
@@ -26,10 +26,10 @@ from mcp.client.stdio import stdio_client
 from dotenv import load_dotenv
 
 from thales.mcp.server import MCPServerManager, MCPServerConfig
-from thales.utils.logger import logger
+from thales.utils import get_logger
 
 load_dotenv()
-
+logger = get_logger(__name__)
 
 """
 class ListToolsResult(PaginatedResult):
@@ -76,7 +76,7 @@ class EnhancedMCPClient:
         logger.debug("Enhanced MCP Client Initialised")
         logger.debug(f"Current directory {current_dir}")
 
-    async def connect_to_server(self, server_name: str) -> None:
+    async def connect(self, server_name: str) -> None:
         """Connect to an MCP Server
 
         Args:
@@ -126,7 +126,7 @@ class EnhancedMCPClient:
             logger.debug(f"❌ Failed to connect to server {server_name}")
             raise
 
-    async def disconnect_server(self, server_name: str) -> None:
+    async def disconnect(self, server_name: str) -> None:
         """Disconnect from specified MCP server"""
         if server_name not in self.sessions:
             logger.debug(f"Not connected to {server_name}")
@@ -137,30 +137,30 @@ class EnhancedMCPClient:
         logger.debug(f"Disconnected from {server_name}")
 
 
-    async def list_connected_servers(self) -> Dict[str, MCPServerConfig]:
-        """list all connected servers"""
+    async def list_servers(self) -> Dict[str, MCPServerConfig]:
+        """List all connected servers"""
         for name, config in self.active_servers.items():
             logger.debug(f"\n🔗 {name}: {config.description}")
 
         return self.active_servers
 
     
-    async def list_connected_tools(self, requested_server_name: str | None = None) -> ListToolsResult | None:
-        """list all connected servers and their tools"""
+    async def list_tools(self, server_name: str | None = None) -> ListToolsResult | None:
+        """List all connected servers and their tools"""
         if not self.sessions:
             logger.debug("No active server sessions")
             return
 
         found = ListToolsResult(tools=[])
 
-        for server_name, session in self.sessions.items():
+        for session_name, session in self.sessions.items():
 
-            if  requested_server_name and server_name != requested_server_name:
-                print(f"Searching for tools for x1 server: {requested_server_name}")
+            if server_name and session_name != server_name:
+                print(f"Searching for tools for x1 server: {server_name}")
                 continue
 
-            config = self.active_servers[server_name]
-            print(f"\n🔗 {server_name}: {config.description}")
+            config = self.active_servers[session_name]
+            print(f"\n🔗 {session_name}: {config.description}")
 
             try:
                 res = await session.list_tools()
@@ -221,16 +221,19 @@ Commands:
 
                     case "connect":
                         if len(command) > 1:
-                            await self.connect_to_server(command[1])
+                            await self.connect(command[1])
 
                     case "disconnect":
                         if len(command) > 1:
-                            await self.disconnect_server(command[1])
+                            await self.disconnect(command[1])
                 
                     case "servers":
                         for name, config in self.server_manager.list_configured_servers().items():
                             status = "🟢 Connected" if name in self.sessions else "⚪ Available"
                             print(f"  {status} {name}: {config.description}")
+
+                    case "connected":
+                        await self.list_servers()
 
                     case "execute":
                         if len(command) >= 3:  # <server> <tool> <args>
@@ -254,9 +257,9 @@ Commands:
 
                     case "tools":
                         if len(command) == 2:
-                            await self.list_connected_tools(command[1])
+                            await self.list_tools(command[1])
                         else:
-                            await self.list_connected_tools()
+                            await self.list_tools()
 
                     case "help":
                         print(instructions)
@@ -276,7 +279,7 @@ async def main():
         server_name = sys.argv[1]
         client = EnhancedMCPClient()
         try:
-            await client.connect_to_server(server_name=server_name)
+            await client.connect(server_name)
             await client.interactive_mode()
         finally:
             await client.cleanup()

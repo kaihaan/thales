@@ -68,11 +68,12 @@ from datetime import datetime, timedelta
 # =============================================================================
 
 # Import the new ontology system
-from thales.agents.ontology import (
+from thales.agents import (
     AgentOntology, AgentIdentity, AgentType, CommunicationStyle, DecisionStyle,
     Goal, GoalType, GoalStatus, TimeConstraint,
     Task, TaskType, TaskStatus
 )
+
 
 def create_test_agent() -> AgentOntology:
     """Create a test agent with ontology"""
@@ -86,7 +87,7 @@ def create_test_agent() -> AgentOntology:
         description="A test agent for demonstrating the ontology system",
         creator="thales_framework",
         domain_expertise=["mathematics", "file_operations", "testing"],
-        preferred_tools=["local-math", "filesystem"],
+        preferred_mcp_servers=["local-math", "filesystem"],
         operating_constraints=["no_network_access", "project_directory_only"]
     )
     

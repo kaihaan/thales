@@ -2,12 +2,13 @@
 import asyncio
 import sys
 import os
-from thales.utils.logger.logger import logger
+from thales.utils.logger.logs import logger
+from mcp.types import Content
 
 # Add the parent directory to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from client.client import EnhancedMCPClient
+from thales.mcp.client import EnhancedMCPClient
 
 class MCPToolTester:
     def __init__(self):
@@ -39,8 +40,8 @@ class MCPToolTester:
                     result = await self.client.execute_tool("local-math", tool_name, args)
                     
                     # Extract result content
-                    if hasattr(result, 'content') and result.content:
-                        result_text = result.content[0].text
+                    if result.content[0].type == "text":
+                            result_text = result.content[0].text
                     else:
                         result_text = str(result)
                     
@@ -68,7 +69,10 @@ class MCPToolTester:
             print("\n🔧 Testing list_directory: Current directory")
             try:
                 result = await self.client.execute_tool("filesystem", "list_directory", {"path": "."})
-                result_text = result.content[0].text if hasattr(result, 'content') else str(result)
+                if result.content[0].type == "text":
+                    result_text = result.content[0].text 
+                else:
+                    result_text = str(result)
                 print(f"  ✅ Directory contents: {result_text[:200]}...")
             except Exception as e:
                 print(f"  ❌ Error: {e}")
@@ -83,7 +87,10 @@ class MCPToolTester:
                     "path": test_filename,
                     "content": test_content
                 })
-                result_text = result.content[0].text if hasattr(result, 'content') else str(result)
+                if result.content[0].type == "text":
+                    result_text = result.content[0].text 
+                else:
+                    result_text = str(result)
                 print(f"  ✅ File created: {result_text}")
             except Exception as e:
                 print(f"  ❌ Error: {e}")
@@ -92,7 +99,10 @@ class MCPToolTester:
             print(f"\n🔧 Testing read_file: Reading {test_filename}")
             try:
                 result = await self.client.execute_tool("filesystem", "read_file", {"path": test_filename})
-                content = result.content[0].text if hasattr(result, 'content') else str(result)
+                if result.content[0].type == "text":
+                    content = result.content[0].text 
+                else:
+                    content = str(result)
                 print(f"  ✅ File content: {content[:100]}...")
                 
                 # Verify content matches
@@ -108,7 +118,10 @@ class MCPToolTester:
             print(f"\n🔧 Testing get_file_info: Info for {test_filename}")
             try:
                 result = await self.client.execute_tool("filesystem", "get_file_info", {"path": test_filename})
-                result_text = result.content[0].text if hasattr(result, 'content') else str(result)
+                if result.content[0].type == "text":
+                    result_text = result.content[0].text 
+                else:
+                    result_text = str(result)
                 print(f"  ✅ File info: {result_text}")
             except Exception as e:
                 print(f"  ❌ Error: {e}")
@@ -120,7 +133,10 @@ class MCPToolTester:
                     "path": ".",
                     "pattern": "*.py"
                 })
-                result_text = result.content[0].text if hasattr(result, 'content') else str(result)
+                if result.content[0].type == "text":
+                    result_text = result.content[0].text 
+                else:
+                    result_text = str(result)
                 print(f"  ✅ Found Python files: {result_text[:200]}...")
             except Exception as e:
                 print(f"  ❌ Error: {e}")
@@ -142,7 +158,7 @@ class MCPToolTester:
         
         # Show available servers
         print("Available servers:")
-        for name, config in self.client.config_manager.list_connected_servers().items():
+        for name, config in self.client.server_manager.list_configured_servers().items():
             status = "🟢 Connected" if name in self.client.sessions else "⚪ Available"
             print(f"  {status} {name}: {config.description}")
 

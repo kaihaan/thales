@@ -5,8 +5,8 @@ from typing import List, Dict, Any
 from datetime import datetime
 
 from .identity import AgentIdentity
-from .goals import Goal, GoalStatus
-from .tasks import Task, TaskStatus, TaskType
+from .goalsClasses import Goal, GoalStatus
+from .tasksClasses import Task, TaskStatus, TaskType
 
 # Placeholder imports for components we'll implement next
 # from .capabilities import CapabilityRegistry
@@ -79,18 +79,9 @@ class AgentOntology:
     
     def assess_goal_feasibility(self, goal: Goal) -> float:
         """Assess if agent can achieve goal (basic implementation)"""
-        # Basic feasibility based on agent type and goal complexity
-        base_feasibility = 0.7
-        
-        # Adjust based on agent's domain expertise
-        if any(domain in goal.description.lower() for domain in self.identity.domain_expertise):
-            base_feasibility += 0.2
-        
-        # Adjust based on available tools
-        if any(tool in self.identity.preferred_tools for tool in goal.resource_requirements):
-            base_feasibility += 0.1
-        
-        return min(1.0, base_feasibility)
+        # TODO: implement a 'do I have any tools that I need' feasibility check
+        # For now simply say everything is feasible! 
+        return 0.7
     
     def plan_goal_execution(self, goal: Goal) -> List[Task]:
         """Create basic execution plan for goal"""

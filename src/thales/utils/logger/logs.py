@@ -2,7 +2,13 @@
 Logger for Thales project
 
 usage:
-- logger.debug("output here")
+    # my_script.py
+    from log_config import get_logger
+
+    logger = get_logger(__name__)
+
+    if __name__ == "__main__":
+        logger.info("Logging is working")
 """
 
 import logging
@@ -17,9 +23,12 @@ logging.basicConfig(
     ],
 )
 
-logger = logging.getLogger(__name__)
+def get_logger(name: str):
+    return logging.getLogger(name)
 
-if __name__ == "main":
+
+if __name__ == "__main__":
+    logger = get_logger(__name__)
     logger.debug("Test")
 
 

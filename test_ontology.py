@@ -5,7 +5,7 @@ Comprehensive test suite for Agent Ontology system
 import unittest
 from datetime import datetime, timedelta
 
-from src.thales.agents.ontology import (
+from thales.agents import (
     AgentOntology, AgentIdentity, AgentType, CommunicationStyle,
     Goal, GoalType, GoalStatus, TimeConstraint,
     Task, TaskType, TaskStatus
@@ -33,7 +33,7 @@ class TestAgentOntology(unittest.TestCase):
     
     def test_goal_creation_and_management(self):
         """Test goal creation and management"""
-        goal = Goal(
+        goal = Goal( 
             goal_id="test_goal",
             description="Test goal",
             goal_type=GoalType.ACHIEVEMENT,
