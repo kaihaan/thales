@@ -12,6 +12,10 @@ from datetime import datetime
 from thales.agents.base.ontology import AgentOntology, Goal, Task, GoalStatus, TaskStatus
 from thales.mcp.client import EnhancedMCPClient
 from thales.utils import get_logger
+from thales.llm.client import OpenAIClient
+from thales.llm.prompts import GoalDecompositionPrompts
+from thales.llm.models import DecomposedTasks, TaskOutput
+import uuid
 
 logger = get_logger(__name__)
 
@@ -52,7 +56,7 @@ class BaseAgent:
         self.execution_context: Dict[str, Any] = {}
 
 
-    async def start(self):
+    async def start(self) -> None:
         """Initialize agent and connect to required MCP servers"""
         # Connect to servers based on agent's preferred tools
         if self.is_running:
@@ -82,7 +86,7 @@ class BaseAgent:
         self.is_running = False
         logger.info("Agent stopped")
 
-    async def execute_goal(self, goal: Goal):
+    async def execute_goal(self, goal: Goal) -> GoalResult:
         """
         Execute a goal by decomposing into tasks and using MCP tools
         
@@ -112,11 +116,11 @@ class BaseAgent:
             goal.started_at = datetime.now()
 
             # Decompose goal into tasks
-            tasks = self.ontology.plan_goal_execution(goal)
+            tasks = await self._decompose_goal_into_tasks(goal)
             logger.info(f"Decomposed goal into {len(tasks)} tasks")
 
             # Execute tasks
-            task_results = []
+            task_results: List[TaskResult] = []
             for task in tasks:
                 self.ontology.add_task(task)
                 task_result = await self.execute_task(task)
@@ -307,3 +311,42 @@ class BaseAgent:
             "active_tasks": len(self.ontology.active_tasks),
             "connected_servers": list(self.mcp_client.sessions.keys()) if hasattr(self.mcp_client, 'sessions') else []
         }
+
+    async def _decompose_goal_into_tasks(self, goal: Goal) -> List[Task]:
+        """Decompose a goal into a list of tasks using an LLM."""
+        prompt_generator = GoalDecompositionPrompts()
+        prompt = prompt_generator.get_prompt(goal.description)
+
+        llm_client = OpenAIClient()
+
+        # Use the new structured output method
+        decomposed_tasks_model: Optional[DecomposedTasks] = await llm_client.generate_structured_output(
+            prompt=prompt,
+            output_type=DecomposedTasks,
+            max_tokens=1000 # Increase max_tokens for structured output
+        )
+
+        response = await llm_client.generate_text(prompt)
+
+        if response.error:
+            logger.error(f"LLM error: {response.error.message}")
+            return []
+
+        if not decomposed_tasks_model or not decomposed_tasks_model.tasks:
+            logger.error(f"LLM failed to decompose goal or returned no tasks for goal: {goal.description}")
+            return []
+    
+        tasks: List[Task] = []
+        for task_output in decomposed_tasks_model.tasks:
+            # Create an instance of your internal Task dataclass
+            new_task = Task(
+                task_id=str(uuid.uuid4()), # Generate unique ID
+                action=task_output.action,
+                task_type=task_output.task_type, # Use the task_type from LLM
+                description=task_output.description,
+                parent_goal=goal.goal_id,
+                # Other fields will use their default values from the Task dataclass
+            )
+            tasks.append(new_task)
+            
+        return tasks

@@ -76,13 +76,13 @@ class Task:
     max_attempts: int = 3
     last_error: Optional[str] = None
     
-    def start_execution(self):
+    def start_execution(self) -> None:
         """Mark task as started"""
         self.status = TaskStatus.IN_PROGRESS
         self.started_at = datetime.now()
         self.attempts += 1
     
-    def complete_task(self, result: Any, confidence: float = 1.0, quality_score: float = 1.0):
+    def complete_task(self, result: Any, confidence: float = 1.0, quality_score: float = 1.0) -> None:
         """Mark task as completed"""
         self.status = TaskStatus.COMPLETED
         self.completed_at = datetime.now()
@@ -93,7 +93,7 @@ class Task:
         if self.started_at:
             self.duration = self.completed_at - self.started_at
     
-    def fail_task(self, error_message: str):
+    def fail_task(self, error_message: str) -> None:
         """Mark task as failed"""
         self.status = TaskStatus.FAILED
         self.last_error = error_message
@@ -106,7 +106,7 @@ class Task:
         """Check if task can be retried"""
         return self.attempts < self.max_attempts and self.status == TaskStatus.FAILED
     
-    def add_feedback(self, feedback: str):
+    def add_feedback(self, feedback: str) -> None:
         """Add feedback to task"""
         self.feedback.append(f"{datetime.now()}: {feedback}")
     

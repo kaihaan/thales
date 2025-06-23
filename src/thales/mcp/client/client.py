@@ -64,7 +64,7 @@ class EnhancedMCPClient:
     - executes tools
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.sessions: Dict[str, ClientSession] = {}
         self.exit_stack = AsyncExitStack()
         #self.anthropic = Anthropic()
@@ -107,17 +107,17 @@ class EnhancedMCPClient:
             self.active_servers[server_name] = config
 
             # list tools
-            response = await session.list_tools()
-            tools = response.tools
+            toolcall = await session.list_tools()
+            tools = toolcall.tools
             logger.debug(f"Connected to {server_name}")
             logger.debug(f"Available tools {[tool.name for tool in tools]}")
 
             # list resources
             try:
-                response = await session.list_resources()
-                if response.resources:
+                rescall = await session.list_resources()
+                if rescall.resources:
                     logger.debug(
-                        f"Available resource {[res.name for res in response.resources]}"
+                        f"Available resource {[res.name for res in rescall.resources]}"
                     )
             except:
                 pass  # not all servers have resources
@@ -149,7 +149,7 @@ class EnhancedMCPClient:
         """List all connected servers and their tools"""
         if not self.sessions:
             logger.debug("No active server sessions")
-            return
+            return None
 
         found = ListToolsResult(tools=[])
 
@@ -269,11 +269,11 @@ Commands:
             except Exception as e:
                 print(f"Error: {e}")
 
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """Clean up all connections"""
         await self.exit_stack.aclose()
 
-async def main():
+async def main() -> None:
     if len(sys.argv) > 1:
         # direct server connection mode
         server_name = sys.argv[1]

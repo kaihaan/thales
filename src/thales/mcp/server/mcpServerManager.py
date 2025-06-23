@@ -19,7 +19,7 @@ class MCPServerConfig:
 class MCPServerManager:
     """class to manage registry of MCP Server configuration settings"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.servers = {
             "filesystem": MCPServerConfig(
                 name="filesystem",
