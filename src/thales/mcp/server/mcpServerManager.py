@@ -36,7 +36,13 @@ class MCPServerManager:
                 command="python",
                 args=["D:\\dev\\Coursera\\Agents\\thales\\src\\thales\\mcp\\server\\math_server.py"],
                 description="Local math operations server",
-            )
+            ),
+            "context-db": MCPServerConfig(
+                name="context-db",
+                command="python",
+                args=["D:\\dev\\Coursera\\Agents\\thales\\src\\thales\\mcp\\server\\context_db_server.py"],
+                description="Server for storing and retrieving agent context components.",
+            ),
         }
 
     def get_server(self, name: str) -> MCPServerConfig:

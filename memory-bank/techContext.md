@@ -381,9 +381,31 @@ MCPServerConfig(
 - `add`, `subtract`, `multiply`, `divide`
 - `power`, `sqrt`, `factorial`
 
+### 3. Context DB Server (Python)
+
+**Type**: Custom Python MCP server
+**Status**: Implemented, pending integration tests
+**Purpose**: Provides persistent storage for agent context components (Identities, Goals, Tasks) using SQLite.
+
+**Configuration**:
+```python
+MCPServerConfig(
+    name="context-db",
+    command="python",
+    args=["D:\\dev\\Coursera\\Agents\\thales\\src\\thales\\mcp\\server\\context_db_server.py"],
+    description="Server for storing and retrieving agent context components."
+)
+```
+
+**Available Tools**:
+- `store_identity`, `get_identity`
+- `store_goal`, `get_goal`
+- `store_task`, `get_task`
+- `find_components`
+
 ## Planned MCP Server Integrations
 
-### 3. Database Server (Planned)
+### 4. Database Server (Planned)
 
 **Purpose**: SQL and NoSQL database operations
 **Implementation**: Custom MCP server with database connectors

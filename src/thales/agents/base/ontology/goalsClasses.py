@@ -65,7 +65,7 @@ class Goal:
     failure_reasons: List[str] = field(default_factory=list)
     lessons_learned: List[str] = field(default_factory=list)
     
-    def update_progress(self, progress: float, notes: str = ""):
+    def update_progress(self, progress: float, notes: str = "") -> None:
         """Update goal progress"""
         self.progress = max(0.0, min(1.0, progress))
         self.updated_at = datetime.now()
@@ -77,7 +77,7 @@ class Goal:
             self.status = GoalStatus.COMPLETED
             self.completed_at = datetime.now()
     
-    def add_failure_reason(self, reason: str):
+    def add_failure_reason(self, reason: str) -> None:
         """Record failure reason"""
         self.failure_reasons.append(f"{datetime.now()}: {reason}")
         self.attempts += 1

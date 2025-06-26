@@ -37,12 +37,12 @@ class AgentOntology:
     created_at: datetime = field(default_factory=datetime.now)
     last_updated: datetime = field(default_factory=datetime.now)
     
-    def add_goal(self, goal: Goal):
+    def add_goal(self, goal: Goal) -> None:
         """Add a new goal to the agent"""
         self.current_goals.append(goal)
         self.last_updated = datetime.now()
     
-    def complete_goal(self, goal_id: str):
+    def complete_goal(self, goal_id: str) -> None:
         """Move goal from current to completed"""
         for i, goal in enumerate(self.current_goals):
             if goal.goal_id == goal_id:
@@ -53,12 +53,12 @@ class AgentOntology:
                 self.last_updated = datetime.now()
                 break
     
-    def add_task(self, task: Task):
+    def add_task(self, task: Task) -> None:
         """Add a new task to the agent"""
         self.active_tasks.append(task)
         self.last_updated = datetime.now()
     
-    def complete_task(self, task_id: str):
+    def complete_task(self, task_id: str) -> None:
         """Move task from active to completed"""
         for i, task in enumerate(self.active_tasks):
             if task.task_id == task_id:
@@ -117,7 +117,7 @@ class AgentOntology:
         
         return tasks
     
-    def validate_action(self, action: str, context: Dict) -> bool:
+    def validate_action(self, action: str, context: dict[str, str]) -> bool:
         """Basic action validation"""
         # Simple validation - check against operating constraints
         for constraint in self.identity.operating_constraints:

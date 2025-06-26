@@ -101,6 +101,7 @@ class BaseAgent:
 
         try:
             # 1. Validate feasibility
+            # for now returns a hard coded 0.7!
             feasibility = self.ontology.assess_goal_feasibility(goal)
             if feasibility < 0.3:
                 return GoalResult(
@@ -314,6 +315,8 @@ class BaseAgent:
 
     async def _decompose_goal_into_tasks(self, goal: Goal) -> List[Task]:
         """Decompose a goal into a list of tasks using an LLM."""
+
+        #get this from mcp in future
         prompt_generator = GoalDecompositionPrompts()
         prompt = prompt_generator.get_prompt(goal.description)
 

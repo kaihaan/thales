@@ -7,6 +7,7 @@ from .client.base import LLMClient, LLMResponse, LLMError
 from .client.openai_client import OpenAIClient
 from .client.anthropic_client import AnthropicClient
 from .prompts.goal_decomposition import GoalDecompositionPrompts
+from .models import DecomposedTasks
 
 __all__ = [
     "LLMClient",
@@ -14,5 +15,6 @@ __all__ = [
     "LLMError",
     "OpenAIClient",
     "AnthropicClient",
-    "GoalDecompositionPrompts"
+    "GoalDecompositionPrompts",
+    "DecomposedTasks"
 ]

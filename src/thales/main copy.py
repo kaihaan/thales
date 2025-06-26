@@ -1,15 +1,76 @@
 '''
+COPY OF OLD main kept for reference
+===================================
+
 Modular AI Agent Framework - Main Entry Point
 Phase A: MCP Foundation (COMPLETE)
 Phase B: Agent Framework Core (STARTING)
-==============================================================
-Use this to demonstrate & test the currently working features
 '''
 
 import asyncio
 from datetime import datetime, timedelta
 
-# Import Agent Framework
+# =============================================================================
+# PHASE B: AGENT FRAMEWORK CORE - IMPLEMENTATION ROADMAP
+# =============================================================================
+
+# B1: GOAL PROCESSING SYSTEM
+# TODO: Create Goal dataclass with natural language description, priority, constraints
+# TODO: Implement GoalProcessor class that uses LLM to decompose goals into tasks
+# TODO: Add task dependency tracking and execution ordering
+# TODO: Support goal context and constraint validation
+
+# B2: TOOL DISCOVERY ENGINE  
+# TODO: Create ToolDiscoveryEngine that leverages EnhancedMCPClient
+# TODO: Implement capability matching (task requirements -> available tools)
+# TODO: Add tool ranking and selection algorithms
+# TODO: Create tool registry with semantic search capabilities
+
+# B3: BASE AGENT CLASSES
+# TODO: Create BaseAgent abstract class with standard lifecycle
+# TODO: Implement Agent execution modes (Autonomous | Interactive)
+# TODO: Add agent memory integration (working + semantic)
+# TODO: Create specialized agent types (RAGAgent, CodeAgent, ResearchAgent)
+
+# B4: LLM ABSTRACTION LAYER
+# TODO: Create LLMClient interface for provider abstraction
+# TODO: Implement OpenAI, Anthropic, and local model clients
+# TODO: Add prompt templates and structured output handling
+# TODO: Implement cost tracking and model selection logic
+
+# B5: AGENT MEMORY SYSTEMS
+# TODO: Create WorkingMemory for short-term context
+# TODO: Implement SemanticMemory with graph database integration
+# TODO: Add experience storage and learning capabilities
+# TODO: Create memory search and retrieval systems
+
+# =============================================================================
+# IMMEDIATE IMPLEMENTATION PRIORITIES
+# =============================================================================
+
+# PRIORITY 1: Basic Agent Class (This Session)
+# TODO: Create agents/ directory structure
+# TODO: Implement BaseAgent with EnhancedMCPClient integration
+# TODO: Add basic goal execution workflow
+# TODO: Test with simple math/filesystem goals
+
+# PRIORITY 2: Goal Processing (Next Session)
+# TODO: Design Goal and Task dataclasses
+# TODO: Implement basic goal decomposition
+# TODO: Add LLM integration for natural language processing
+# TODO: Test goal -> task -> tool execution flow
+
+# PRIORITY 3: Interactive Mode (Following Session)
+# TODO: Add human feedback loops
+# TODO: Implement decision explanation system
+# TODO: Create tool selection confirmation
+# TODO: Add execution monitoring and intervention
+
+# =============================================================================
+# CURRENT SESSION FOCUS
+# =============================================================================
+
+# Import the new ontology system
 from thales.agents import (
     AgentOntology, AgentIdentity, AgentType, CommunicationStyle, DecisionStyle,
     Goal, GoalType, GoalStatus, TimeConstraint,
@@ -17,7 +78,7 @@ from thales.agents import (
 )
 
 
-def make_an_ontology() -> AgentOntology:
+def create_test_agent() -> AgentOntology:
     """Create a test agent with ontology"""
     
     # Create agent identity
@@ -121,12 +182,12 @@ def test_ontology_system() -> AgentOntology:
     print("=" * 50)
     
     # Create test agent
-    ontology = make_an_ontology()
-    print(f"✅ Created agent: {ontology.identity.name}")
-    print(f"   Type: {ontology.identity.agent_type.value}")
-    print(f"   Expertise: {', '.join(ontology.identity.domain_expertise)}")
+    agent = create_test_agent()
+    print(f"✅ Created agent: {agent.identity.name}")
+    print(f"   Type: {agent.identity.agent_type.value}")
+    print(f"   Expertise: {', '.join(agent.identity.domain_expertise)}")
     print(f"   Personality traits:")
-    for trait, value in ontology.identity.personality_traits.items():
+    for trait, value in agent.identity.personality_traits.items():
         print(f"     {trait}: {value}")
     
     # Create and add goals
@@ -134,8 +195,8 @@ def test_ontology_system() -> AgentOntology:
     print(f"\n📋 Adding {len(test_goals)} test goals:")
     
     for goal in test_goals:
-        ontology.add_goal(goal)
-        feasibility = ontology.assess_goal_feasibility(goal)
+        agent.add_goal(goal)
+        feasibility = agent.assess_goal_feasibility(goal)
         print(f"   Goal: {goal.description}")
         print(f"     Priority: {goal.priority}, Urgency: {goal.urgency}")
         print(f"     Feasibility: {feasibility:.2f}")
@@ -143,17 +204,17 @@ def test_ontology_system() -> AgentOntology:
     
     # Test goal planning
     print(f"\n🎯 Testing goal execution planning:")
-    for goal in ontology.current_goals:
-        tasks = ontology.plan_goal_execution(goal)
+    for goal in agent.current_goals:
+        tasks = agent.plan_goal_execution(goal)
         print(f"   Goal: {goal.goal_id}")
         print(f"     Generated {len(tasks)} tasks:")
         for task in tasks:
             print(f"       - {task.action}: {task.description}")
-            ontology.add_task(task)
+            agent.add_task(task)
     
     # Test task management
     print(f"\n📝 Task Management:")
-    pending_tasks = ontology.get_pending_tasks()
+    pending_tasks = agent.get_pending_tasks()
     print(f"   Pending tasks: {len(pending_tasks)}")
     
     # Simulate task execution
@@ -175,7 +236,7 @@ def test_ontology_system() -> AgentOntology:
         print(f"     Quality score: {first_task.quality_score}")
         
         # Move to completed
-        ontology.complete_task(first_task.task_id)
+        agent.complete_task(first_task.task_id)
     
     # Test action validation
     print(f"\n🔒 Testing action validation:")
@@ -187,13 +248,13 @@ def test_ontology_system() -> AgentOntology:
     ]
     
     for action in test_actions:
-        is_valid = ontology.validate_action(action, {})
+        is_valid = agent.validate_action(action, {})
         status = "✅ ALLOWED" if is_valid else "❌ BLOCKED"
         print(f"   {action}: {status}")
     
     # Display ontology summary
     print(f"\n📊 Agent Ontology Summary:")
-    summary = ontology.get_ontology_summary()
+    summary = agent.get_ontology_summary()
     print(f"   Agent: {summary['identity']['name']} ({summary['identity']['type']})")
     print(f"   Goals: {summary['goals']['active']} active, {summary['goals']['completed']} completed")
     print(f"   Tasks: {summary['tasks']['active']} active, {summary['tasks']['completed']} completed")
@@ -201,8 +262,8 @@ def test_ontology_system() -> AgentOntology:
     
     # Test goal progress tracking
     print(f"\n📈 Testing goal progress tracking:")
-    if ontology.current_goals:
-        test_goal = ontology.current_goals[0]
+    if agent.current_goals:
+        test_goal = agent.current_goals[0]
         print(f"   Goal: {test_goal.description}")
         print(f"   Initial progress: {test_goal.progress}")
         
@@ -218,30 +279,20 @@ def test_ontology_system() -> AgentOntology:
         print(f"   Status: {test_goal.status.value}")
     
     print(f"\n🎉 Ontology system test completed!")
-    return ontology
+    return agent
 
 def main() -> None:
-    """Main function - to demonstrate and test currently working functionality """
-    print("Thales AI Agent Framework - Phase B")
+    """Main test function"""
+    print("🚀 Modular AI Agent Framework - Phase B")
+    print("Testing Agent Ontology System")
     print("=" * 60)
     
-    # intended usage / syntax
-    # Step 0. Operator Browses Agent Context Library on a web interface
-    # Step 1. Add or retrieve an AgentOntology to the AgentContext MCP
-    #         - ontology = AgentOnology({init})
-    #         - await mcp('AgentContext').addOntology(ontology)
-    # Step 2. Add or retreive Agent Goals to the AgentContext MCP
-    #         - goals = list[ Goal({init}), Goal({init})]
-    #         - await mcp('AgentContext').addGoals(goals=goals, name="goal set name")
-    # Step 3. Create new agent, retrieving Ontology & Goals from AgentContent MCP
-    #         - agent = Agent(ontology="ontology.name", goals = "goal set name", llm="llm")
-    # Step 4. Run agent
-    #         - output = await agent.start()
-    # Step 5. Display final output
-
-    ontology = make_an_ontology()
-    # TODO enable MCP client to make state persistent with database
-
+    # Run ontology tests
+    agent = test_ontology_system()
+    
+    print(f"\n✨ Agent Ontology Framework is working!")
+    print(f"   Agent '{agent.identity.name}' successfully created and tested")
+    print(f"   Ready for integration with MCP client and LLM systems")
 
 if __name__ == "__main__":
     main()

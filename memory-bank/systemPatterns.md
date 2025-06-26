@@ -78,6 +78,7 @@ class MCPConfigManager:
         self.servers = {
             "filesystem": MCPServerConfig(...),
             "local-math": MCPServerConfig(...),
+            "context-db": MCPServerConfig(...),
         }
 ```
 
