@@ -1,12 +1,21 @@
 """Complete Agent Ontology Integration"""
+""" 
+AI Agent Context
+- Ontology
+- Goals
+- Messaging History
+- Knowledge
+- Tool Usage
+- Policies
+"""
 
 from dataclasses import dataclass, field
 from typing import List, Dict, Any
 from datetime import datetime
 
-from .identity import AgentIdentity
-from .goalsClasses import Goal, GoalStatus
-from .tasksClasses import Task, TaskStatus, TaskType
+from .style.identity import AgentIdentity
+from .intentions.goalsClasses import Goal, GoalStatus
+from .intentions.tasksClasses import Task, TaskStatus, TaskType
 
 # Placeholder imports for components we'll implement next
 # from .capabilities import CapabilityRegistry

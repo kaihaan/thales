@@ -1,7 +1,7 @@
 # src/thales/llm/prompts/goal_decomposition.py
 import json
 from thales.llm.models import DecomposedTasks # Import the Pydantic model
-from thales.agents.base.ontology.tasksClasses import TaskType
+from thales.agents.base.ontology.intentions.tasksClasses import TaskType
 
 class GoalDecompositionPrompts:
     def __init__(self) -> None:

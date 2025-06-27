@@ -1,14 +1,37 @@
 # Next Development Priorities
 
-## Current Status: BaseAgent Complete ✅
-- ✅ Working AI Agent with goal execution
-- ✅ MCP client integration functional
-- ✅ Ontology system tested and debugged
-- ✅ Basic agent testing validated
+## Current Status: `_Knowledge` class refactored ✅
+- ✅ Internal `_Knowledge` class provides persistent session and message storage.
+- ✅ In-memory caching implemented for efficient message retrieval.
+- ✅ All outstanding `Mypy` errors and logical bugs have been resolved.
 
 ## Recommended Next Steps (Priority Order)
 
-### Priority 1: LLM Integration for Goal Decomposition 🎯
+### Priority 1: Complete the Knowledge Class 🎯
+**Why**: The public-facing `Knowledge` class is needed to provide a clean, safe interface to the agent's memory systems.
+**Impact**: Encapsulates the internal `_Knowledge` class, providing a robust and easy-to-use API for the `BaseAgent`.
+**Effort**: <1 session
+
+**Implementation Tasks**:
+1. **Create `Knowledge` Wrapper Class** (`src/thales/agents/base/ontology/knowledge/knowledge.py`)
+   - This class will be a context manager.
+   - It will instantiate and hold the internal `_Knowledge` object.
+   - It will expose a simplified, public API for managing sessions and messages.
+
+2. **Implement Public-Facing Methods**
+   - `start_session`: Proxies to the internal `_Knowledge` method.
+   - `add_message`: Proxies to the internal `_Knowledge` method.
+   - `get_history`: Proxies to the internal `_Knowledge` method.
+   - `register_tool`, `discover_and_add_tools`, `use_tool`: Proxies to the internal `_Knowledge` methods.
+
+3. **Update `BaseAgent`**
+   - Modify the `BaseAgent` to use the new `Knowledge` class instead of directly instantiating `_Knowledge`.
+
+**Test Goals**:
+- Verify that the `BaseAgent` can still create and manage sessions through the new `Knowledge` class.
+- Confirm that message history is correctly persisted and retrieved.
+
+### Priority 2: LLM Integration for Goal Decomposition
 **Why**: Transform from hardcoded task decomposition to intelligent goal processing
 **Impact**: Makes agents truly "intelligent" rather than just task executors
 **Effort**: 1-2 sessions
@@ -29,12 +52,7 @@
    - Add goal complexity assessment
    - Implement dynamic task creation
 
-**Test Goals**:
-- "Analyze the sales data in quarterly_report.csv and create a summary"
-- "Help me organize my project files by creating a proper directory structure"
-- "Calculate compound interest for a $10,000 investment over 5 years at 7% APR"
-
-### Priority 2: Interactive Agent Mode 🤝
+### Priority 3: Interactive Agent Mode 🤝
 **Why**: Enable human-in-the-loop decision making and explanation
 **Impact**: Makes agents collaborative rather than autonomous-only
 **Effort**: 1 session
@@ -55,38 +73,11 @@
    - How goals were decomposed
    - What the agent learned from execution
 
-### Priority 3: Tool Discovery Engine 🔍
-**Why**: Dynamic tool selection based on goal requirements
-**Impact**: Agents become adaptive to available tools
-**Effort**: 1-2 sessions
-
-**Implementation Tasks**:
-1. **ToolDiscoveryEngine** (`src/thales/agents/tools/`)
-   - Capability matching (goal requirements → available tools)
-   - Tool ranking and selection algorithms
-   - Semantic tool registry
-
-2. **Enhanced MCP Integration**
-   - Automatic server discovery
-   - Tool capability analysis
-   - Performance-based tool selection
-
-### Priority 4: Specialized Agent Types 🎭
-**Why**: Domain-specific optimization and behavior
-**Impact**: Agents optimized for specific use cases
-**Effort**: 1 session per agent type
-
-**Agent Types to Implement**:
-1. **RAGAgent** - Knowledge retrieval and synthesis
-2. **CodeAgent** - Programming and development tasks
-3. **ResearchAgent** - Information gathering and analysis
-4. **FileAgent** - File management and organization
-
 ## Strategic Considerations
 
 ### Short-term Focus (Next 2-3 Sessions)
-**Recommended Path**: Priority 1 (LLM Integration) → Priority 2 (Interactive Mode)
-**Rationale**: These provide the biggest leap in agent intelligence and usability
+**Recommended Path**: Priority 1 (Complete Knowledge Class) → Priority 2 (LLM Integration)
+**Rationale**: Completing the `Knowledge` class provides a stable foundation for the more advanced features to come.
 
 ### Medium-term Goals (Following 3-4 Sessions)
 - Tool Discovery Engine
@@ -101,45 +92,44 @@
 
 ## Implementation Strategy
 
-### Session 1: LLM Foundation
+### Session 1: Complete Knowledge Class
+1. Create `Knowledge` wrapper class.
+2. Implement public-facing proxy methods.
+3. Update `BaseAgent` to use the new class.
+
+### Session 2: LLM Foundation
 1. Create LLM abstraction layer
 2. Implement OpenAI client
 3. Basic prompt templates
 
-### Session 2: Intelligent Goal Processing
+### Session 3: Intelligent Goal Processing
 1. LLM-powered goal decomposition
 2. Update BaseAgent integration
 3. Test with complex goals
 
-### Session 3: Interactive Mode
-1. Human-in-the-loop execution
-2. Decision explanation system
-3. Feedback integration
-
 ## Success Metrics
 
 ### Technical Goals
-- Agent can decompose natural language goals into executable tasks
-- Human can interact with and guide agent execution
-- Agent explains its reasoning and decisions
+- `_Knowledge` class is properly encapsulated.
+- `BaseAgent` uses a clean, public API for memory management.
+- Agent can decompose natural language goals into executable tasks.
 
 ### Educational Goals
-- Deep understanding of LLM integration patterns
-- Human-AI collaboration design
-- Prompt engineering for agent systems
+- Understanding of API design and encapsulation.
+- Deep understanding of LLM integration patterns.
+- Human-AI collaboration design.
 
 ### Project Value
-- Agents become genuinely useful for real-world tasks
-- Foundation for advanced agent capabilities
-- Reusable patterns for future agent development
+- A robust, reusable memory system for agents.
+- Agents become genuinely useful for real-world tasks.
+- Foundation for advanced agent capabilities.
 
-## Recommendation: Start with Priority 1 (LLM Integration)
+## Recommendation: Start with Priority 1 (Complete the Knowledge Class)
 
 **Why this is the best next step**:
-1. **Biggest Impact**: Transforms agents from scripted to intelligent
-2. **Foundation for Everything**: Other features depend on smart goal processing
-3. **Immediate Value**: Makes agents useful for real tasks
-4. **Learning Opportunity**: Core AI agent development skill
-5. **Natural Progression**: Builds on solid BaseAgent foundation
+1. **Good Software Design**: Encapsulating the internal `_Knowledge` class is a best practice.
+2. **Stability**: Provides a stable API for the rest of the agent to build upon.
+3. **Quick Win**: This is a small, well-defined task that can be completed quickly.
+4. **Natural Progression**: Logically follows from the refactoring of the `_Knowledge` class.
 
-**Specific Starting Point**: Create the LLM abstraction layer and implement OpenAI integration for goal decomposition.
+**Specific Starting Point**: Create the `Knowledge` wrapper class and update the `BaseAgent` to use it.

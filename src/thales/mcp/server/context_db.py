@@ -1,3 +1,40 @@
+"""
+SQLITE AI Agent Context Database 
+Stores
+- MCP:
+    - Prompts
+        {
+            name: string;              // Unique identifier for the prompt
+            description?: string;      // Human-readable description
+            arguments?: [              // Optional list of arguments
+                {
+                name: string;          // Argument identifier
+                description?: string;  // Argument description
+                required?: boolean;    // Whether argument is required
+                }
+            ]
+        }
+    - Resources
+        - Text resources
+            - docs
+        - Binary
+            - images
+            - videos
+            - pdfs
+            - audio
+- Agent Framework
+    - Goals & Tasks
+    - Agent Ontology
+        - identity
+        - interactions
+        - policies
+        - 
+
+TODO Create Pydantic/Dataclass model for each
+    - Goals / Tasks / AgentOntology from AgentOntology
+    - Prompts / 
+"""
+
 import sqlite3
 import json
 from typing import Optional, List, Dict, Any, TypeGuard

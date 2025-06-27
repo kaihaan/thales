@@ -1,6 +1,6 @@
 # Progress: Modular AI Agent Learning Project
 
-## Overall Project Status: 25% Complete (Scope Expanded)
+## Overall Project Status: 30% Complete (Scope Expanded)
 
 ### Project Evolution
 
@@ -16,9 +16,9 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 - ✅ **A5: MCP Client Requirements** - 100% Complete (comprehensive specification documented)
 - ✅ **A6: Documentation** - 100% Complete (memory bank docs complete, interface documented)
 
-#### Phase B: Agent Framework Core - 30% Complete (In Progress)
+#### Phase B: Agent Framework Core - 35% Complete (In Progress)
 
-**Status**: BaseAgent implemented and tested, ready for advanced features
+**Status**: BaseAgent implemented and tested, Ontology refined.
 
 ##### B1: Goal Processing System - 25% Complete
 - ✅ **Agent Ontology Framework** - Complete goal/task dataclasses with validation
@@ -45,7 +45,7 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 - TODO: Add tool ranking and selection algorithms
 - TODO: Create tool registry with semantic search capabilities
 
-##### B3: Base Agent Classes - 60% Complete
+##### B3: Base Agent Classes - 65% Complete
 - ✅ **Agent Ontology** - Complete identity, personality, and behavior framework
 - ✅ **Goal/Task Management** - Full lifecycle management with status tracking
 - ✅ **Action Validation** - Security constraints and permission system
@@ -53,6 +53,7 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 - ✅ **Field Issue Resolution** - Fixed dataclass Field initialization bug
 - ✅ **Goal Execution** - Complete execute_goal() and execute_task() methods implemented and tested
 - ✅ **Basic Agent Testing** - BaseAgent functionality validated with test goals
+- ✅ **Knowledge Class Refactor** - Refactored `_Knowledge` class for efficient in-memory message caching.
 - 📋 **Execution Modes** - Autonomous vs Interactive agent modes
 - 📋 **Specialized Agents** - RAGAgent, CodeAgent, ResearchAgent types
 
@@ -76,8 +77,9 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 - TODO: Add prompt templates and structured output handling
 - TODO: Implement cost tracking and model selection logic
 
-##### B5: Agent Memory Systems - 15% Complete
+##### B5: Agent Memory Systems - 20% Complete
 - ✅ **Context DB Server** - MCP Server for persistent storage of context components (Identities, Goals, Tasks) using SQLite.
+- ✅ **Knowledge Class** - `_Knowledge` class provides persistent session and message storage with in-memory caching.
 - 📋 **Working Memory** - Short-term context management
 - 📋 **Semantic Memory** - Graph database integration for long-term storage
 - 📋 **Experience Storage** - Learning capabilities and experience tracking
@@ -85,6 +87,8 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 
 **Detailed Implementation Plan**:
 - ✅ Create ContextDB MCP Server (COMPLETE)
+- ✅ Implement `_Knowledge` class for session/message persistence (COMPLETE)
+- TODO: Create `Knowledge` wrapper class.
 - TODO: Create WorkingMemory for short-term context
 - TODO: Implement SemanticMemory with graph database integration
 - TODO: Add experience storage and learning capabilities
@@ -211,7 +215,7 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 ### Phase A Completion: MCP Foundation (Current Priority)
 
 **Remaining Work**:
-- Fix asyncio cleanup warnings
+- Fix asyncio cleanup warnings in test suite
 - Standardize client interface methods
 - Complete MCP documentation
 - Performance validation
