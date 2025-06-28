@@ -114,12 +114,15 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 - TODO: Create tool selection confirmation
 - TODO: Add execution monitoring and intervention
 
-#### Phase C: Knowledge Graph RAG - 0% Complete (New)
-- 📋 **C1: Knowledge Graph Integration** - Graph database connectivity
-- 📋 **C2: RAG Agent Implementation** - AI Agent for context retrieval
-- 📋 **C3: Semantic Search** - Vector embeddings and similarity search
-- 📋 **C4: Context Optimization** - Relevance ranking and filtering
-- 📋 **C5: Graph Construction** - Automated knowledge graph building
+#### Phase C: Knowledge Graph RAG - 15% Complete (In Progress)
+- ✅ **C1: Vector Store Implementation** - ChromaDB vector store implemented.
+- ✅ **C2: Data Models** - `SearchResult` and other data models defined.
+- ✅ **C3: Robust Testing** - Resilient test teardown pattern implemented for ChromaDB tests.
+- 📋 **C4: Graph Integration** - Graph database connectivity
+- 📋 **C5: RAG Agent Implementation** - AI Agent for context retrieval
+- 📋 **C6: Semantic Search** - Vector embeddings and similarity search
+- 📋 **C7: Context Optimization** - Relevance ranking and filtering
+- 📋 **C8: Graph Construction** - Automated knowledge graph building
 
 #### Phase D: Multi-Agent Patterns - 0% Complete (New)
 - 📋 **D1: Agent Communication** - Inter-agent messaging protocols
@@ -200,10 +203,10 @@ The project has evolved from a focused MCP learning exercise to a comprehensive 
 
 ### MCP Foundation Issues (Minor)
 
-#### 1. Asyncio Cleanup Warnings (Priority 1)
-**Issue**: Windows subprocess cleanup generates cosmetic warnings
-**Impact**: Tests pass but cleanup isn't graceful
-**Solution**: Implement proper shutdown sequence with async delays
+#### 1. Resilient Test Teardown (Priority 1) - ✅ RESOLVED
+**Issue**: `PermissionError` during test cleanup on Windows due to file locks from `ChromaDB`.
+**Impact**: Tests were failing and flaky.
+**Solution**: Implemented a robust context manager with explicit resource release, garbage collection, and a retry loop with exponential backoff. This pattern is now documented in `systemPatterns.md`.
 
 #### 2. Client Interface Inconsistencies (Priority 2)
 **Issue**: Method naming inconsistencies in EnhancedMCPClient

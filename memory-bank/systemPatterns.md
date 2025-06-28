@@ -550,6 +550,47 @@ class AgentTester:
 - Performance benchmarking
 - Regression prevention
 
+### 2. Resilient Test Teardown for File-Based Resources
+
+**Pattern**: Robust cleanup of file-based resources in async tests, especially on Windows.
+**Status**: Implemented
+**Context**: ChromaDB's file-based backend (`SQLite`) can cause `PermissionError` on Windows during test teardown because file locks are not released immediately.
+**Implementation**: A context manager that combines explicit resource release, garbage collection, and a retry loop with exponential backoff.
+
+```python
+@asynccontextmanager
+async def resilient_resource_context():
+    # 1. Setup: Create resource
+    resource = initialize_resource()
+    try:
+        yield resource
+    finally:
+        # 2. Teardown
+        resource.close()  # Explicitly close/release
+        del resource      # Remove reference
+        gc.collect()      # Force garbage collection
+
+        # 3. Retry loop for cleanup
+        delays = [0.5, 1, 2, 4, 8]
+        for delay in delays:
+            try:
+                if os.path.exists(RESOURCE_PATH):
+                    shutil.rmtree(RESOURCE_PATH)
+                break
+            except PermissionError:
+                await asyncio.sleep(delay)
+        else:
+            # 4. Fail gracefully if cleanup fails
+            raise RuntimeError("Failed to clean up resource after retries.")
+
+```
+
+**Benefits**:
+- **Reliability**: Significantly reduces test flakiness on Windows.
+- **Robustness**: Handles stubborn file locks gracefully.
+- **Clarity**: Encapsulates complex cleanup logic in a reusable context manager.
+- **Safety**: Prevents test artifacts from leaking between test runs.
+
 ## Key Architectural Decisions
 
 ### 1. Modular Component Design

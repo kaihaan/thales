@@ -249,7 +249,7 @@ class _Knowledge:
 
     async def discover_and_add_tools(self, query: str) -> None:
         """Uses the MCP client to find and register tools relevant to a query."""
-        found_tools = await self.mcp.find_tools(query)
+        found_tools = await self.mcp.discover_and_add_tools()
         for tool in found_tools:
             self.register_tool(tool)
 
@@ -260,3 +260,24 @@ class _Knowledge:
         tool = self.tools[name]
         result = await tool.run(query=query)
         return str(result)
+
+
+async def main()->None:
+    """ test _Knowledge """
+    # from thales.mcp.client import EnhancedMCPClient
+
+    mcp = EnhancedMCPClient()
+    kb =await _Knowledge.create("kb", "Agent_Caller", mcp)
+    session_id = await kb.start_session()
+    print(f"Session ID {session_id}")
+    msg = await kb.add_message(session_id, MessageRole.USER, "Hello World", ActorID("User_Caller"))
+    msg = await kb.add_message(session_id, MessageRole.AGENT, "What do you want?", ActorID("Agent_Caller"))
+    hist = kb.get_history(SessionID(session_id))
+    print(hist)
+    await kb.close()
+
+
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
