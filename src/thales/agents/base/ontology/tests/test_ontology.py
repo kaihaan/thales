@@ -14,7 +14,7 @@ from thales.agents import (
 class TestAgentOntology(unittest.TestCase):
     """Test cases for Agent Ontology system"""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures"""
         self.identity = AgentIdentity(
             agent_id="test_agent",
@@ -24,14 +24,14 @@ class TestAgentOntology(unittest.TestCase):
         )
         self.ontology = AgentOntology(identity=self.identity)
     
-    def test_agent_identity_creation(self):
+    def test_agent_identity_creation(self) -> None:
         """Test agent identity creation"""
         self.assertEqual(self.identity.name, "TestAgent")
         self.assertEqual(self.identity.agent_type, AgentType.GENERAL)
         self.assertIn("testing", self.identity.domain_expertise)
         self.assertIsInstance(self.identity.personality_traits, dict)
     
-    def test_goal_creation_and_management(self):
+    def test_goal_creation_and_management(self) -> None:
         """Test goal creation and management"""
         goal = Goal( 
             goal_id="test_goal",
@@ -57,7 +57,7 @@ class TestAgentOntology(unittest.TestCase):
         goal.update_progress(1.0, "Completed")
         self.assertEqual(goal.status, GoalStatus.COMPLETED)
     
-    def test_task_creation_and_execution(self):
+    def test_task_creation_and_execution(self) -> None:
         """Test task creation and execution"""
         task = Task(
             task_id="test_task",
@@ -82,7 +82,7 @@ class TestAgentOntology(unittest.TestCase):
         self.assertEqual(task.confidence, 0.9)
         self.assertEqual(task.quality_score, 0.8)
     
-    def test_goal_feasibility_assessment(self):
+    def test_goal_feasibility_assessment(self) -> None:
         """Test goal feasibility assessment"""
         goal = Goal(
             goal_id="math_goal",
@@ -95,7 +95,7 @@ class TestAgentOntology(unittest.TestCase):
         self.assertGreaterEqual(feasibility, 0.0)
         self.assertLessEqual(feasibility, 1.0)
     
-    def test_goal_execution_planning(self):
+    def test_goal_execution_planning(self) -> None:
         """Test goal execution planning"""
         goal = Goal(
             goal_id="planning_test",
@@ -112,7 +112,7 @@ class TestAgentOntology(unittest.TestCase):
             self.assertEqual(task.parent_goal, goal.goal_id)
             self.assertIsInstance(task.task_type, TaskType)
     
-    def test_action_validation(self):
+    def test_action_validation(self) -> None:
         """Test action validation"""
         # Test allowed action
         self.assertTrue(self.ontology.validate_action("calculate", {}))
@@ -121,7 +121,7 @@ class TestAgentOntology(unittest.TestCase):
         self.identity.operating_constraints = ["no_delete"]
         self.assertFalse(self.ontology.validate_action("delete_file", {}))
     
-    def test_ontology_summary(self):
+    def test_ontology_summary(self) -> None:
         """Test ontology summary generation"""
         summary = self.ontology.get_ontology_summary()
         

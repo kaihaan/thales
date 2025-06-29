@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Chromadb
+test_chroma_db/
+
+# pytest-cov
+htmlcov/
+
 # Hatch build artifacts
 dist/
 build/

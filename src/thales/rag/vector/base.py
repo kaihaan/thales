@@ -1,21 +1,28 @@
 # src/thales/rag/vector/base.py
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
-from thales.rag.data.models import SearchResult
+from thales.rag.data import SearchResult, Metadata, Metadatas, Documents
 
 class VectorStore(ABC):
     """Abstract base class for vector database operations."""
 
     @abstractmethod
-    async def similarity_search(
+    def add_documents_sync(self, documents: Documents, metadatas: Metadatas | None) -> None:
+        """
+        Syncronous adds docs to vectorStore collection.
+        """
+
+        pass
+
+    @abstractmethod
+    def similarity_search_sync(
         self,
         query: str,
         k: int = 10,
-        tags: Optional[List[str]] = None
-    ) -> List[SearchResult]:
+        metadata: Metadata | None = None
+    ) -> SearchResult:
         """
-        Performs a similarity search against the vector store.
+        Performs Syncronous similarity search against the vector store.
         
         Args:
             query: The text to search for.

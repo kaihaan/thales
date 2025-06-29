@@ -1,13 +1,15 @@
 # src/thales/rag/vector/chroma_impl.py
 
 import chromadb
-from chromadb.config import Settings
+from chromadb.config import Settings, DEFAULT_TENANT, DEFAULT_DATABASE
 from chromadb.utils import embedding_functions
-from typing import List, Optional, Dict, Any, cast
+from chromadb.types import Metadata
+from typing import List, Dict, Any
 import uuid
 
 from thales.rag.vector.base import VectorStore
 from thales.rag.data.models import SearchResult
+
 
 class ChromaVectorStore(VectorStore):
     """A vector store implementation using ChromaDB."""
@@ -20,72 +22,59 @@ class ChromaVectorStore(VectorStore):
     ):
         self.client = chromadb.PersistentClient(
             path=path,
-            settings=Settings(allow_reset=True)
+            settings=Settings(allow_reset=True),
+            tenant=DEFAULT_TENANT,
+            database=DEFAULT_DATABASE
         )
         self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
             model_name=embedding_model_name
         )
         self.collection = self.client.get_or_create_collection(
             name=collection_name,
-            embedding_function=self.embedding_function # type: ignore
+            embedding_function=self.embedding_function, # type: ignore
+            metadata={"use": "testing", "year": "2025", "subject": "nonsense"}
         )
 
-    async def add_documents(self, documents: List[str], metadatas: List[Dict[str, Any]]) -> None:
+    def add_documents_sync(self, documents: List[str], metadatas: List[Metadata] | None) -> None:
         """Adds documents to the collection, converting list of tags to separate boolean fields."""
-        processed_metadatas = []
-        for meta in metadatas:
-            new_meta: Dict[str, Any] = {}
-            for k, v in meta.items():
-                if k == 'tags' and isinstance(v, list):
-                    for tag in v:
-                        new_meta[f"tag_{tag}"] = True
-                else:
-                    new_meta[k] = v
-            processed_metadatas.append(new_meta)
-
         ids = [str(uuid.uuid4()) for _ in documents]
         self.collection.add(
             documents=documents,
-            metadatas=cast(List[Dict[str, str | int | float | bool]], processed_metadatas),
+            metadatas=metadatas,
             ids=ids
         )
 
-    async def similarity_search(
+    def similarity_search_sync(
         self,
         query: str,
         k: int = 10,
-        tags: Optional[List[str]] = None
-    ) -> List[SearchResult]:
-        """Performs a similarity search against the vector store."""
-        where_clause: Optional[Dict[str, Any]] = None
-        if tags:
-            if len(tags) > 1:
+        metadata: Metadata | None = None
+    ) -> SearchResult:
+        """Performs a similarity search against the vector store.  Default AND for tags for now """
+        where_clause: Dict[str, Any] | None = None
+        if metadata:
+            if len(metadata)>1:
                 where_clause = {
-                    "$and": [{f"tag_{tag}": {"$eq": True}} for tag in tags]
+                    "$and": [{f"{key}": f"{value}"} for key, value in metadata.items()]
                 }
             else:
-                where_clause = {f"tag_{tags[0]}": {"$eq": True}}
+                key, value = next(iter(metadata.items()))
+                where_clause = {
+                    f"{key}": f"{value}"
+                }
 
-        results = self.collection.query(
+        # chromadb search
+        cq = self.collection.query(
             query_texts=[query],
             n_results=k,
-            where=where_clause
+            where=where_clause,
+            include=["documents", "distances", "metadatas"]
         )
 
-        search_results = []
-        if results and results['ids'] and results['documents'] and results['distances'] and results['metadatas']:
-            ids = results['ids'][0]
-            documents = results['documents'][0]
-            distances = results['distances'][0]
-            metadatas = results['metadatas'][0]
+        print(f"Found {cq}")
 
-            for i in range(len(ids)):
-                search_results.append(
-                    SearchResult(
-                        node_id=ids[i],
-                        content=documents[i],
-                        score=1.0 - distances[i],
-                        metadata=cast(Dict[str, Any], metadatas[i])
-                    )
-                )
-        return search_results
+        # convert to expected thales SearchResult
+        results = SearchResult(ids = cq["ids"], documents=cq["documents"], metadatas=cq["metadatas"], distances=cq["distances"])
+
+
+        return results

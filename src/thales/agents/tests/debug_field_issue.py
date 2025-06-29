@@ -11,7 +11,7 @@ from thales.agents import (
     Goal, GoalType, GoalStatus, TimeConstraint
 )
 
-def test_field_initialization():
+def test_field_initialization() -> bool:
     """Test that AgentOntology fields are properly initialized"""
     
     print("🔍 Testing AgentOntology field initialization...")

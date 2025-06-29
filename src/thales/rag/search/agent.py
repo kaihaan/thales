@@ -3,8 +3,7 @@
 from typing import Any, List, Optional
 import asyncio
 
-from thales.agents.base.base import BaseAgent, TaskResult
-from thales.agents.base.ontology import AgentOntology, Task
+from thales.agents.base import BaseAgent, TaskResult, AgentOntology, Task
 from thales.rag.data.models import Context, SearchResult
 from thales.rag.vector.base import VectorStore
 from thales.rag.graph.base import GraphDatabase
@@ -43,13 +42,25 @@ class RAGAgent(BaseAgent):
         The primary method for this agent. It retrieves and ranks context.
         """
         print(f"RAGAgent: Retrieving context for query: '{query}' with tags: {tags}")
-        initial_results = await self.vector_store.similarity_search(query, k=k, tags=tags)
-        
-        node_ids = [res.node_id for res in initial_results]
+        initial = self.vector_store.similarity_search_sync(query, k=k, metadata=None)
+        vector_items: List[SearchResult] = []
+        for ids_group, docs_group, metas_group, dists_group in zip(
+            initial.ids,
+            initial.documents or [],
+            initial.metadatas or [],
+            initial.distances or []
+        ):
+            vector_items.append(
+                SearchResult(
+                    ids=[ids_group],
+                    documents=[docs_group] if docs_group is not None else None,
+                    metadatas=[metas_group] if metas_group is not None else None,
+                    distances=[dists_group] if dists_group is not None else None
+                )
+            )
+        node_ids = [id for group in initial.ids for id in group]
         connected_nodes = await self.graph_db.get_connected_nodes(node_ids, depth=depth, tags=tags)
-        
-        final_context = self._rank_and_combine(initial_results, connected_nodes)
-        
+        final_context = self._rank_and_combine(vector_items, connected_nodes)
         print(f"RAGAgent: Found {len(final_context)} context items.")
         return final_context
 
@@ -59,11 +70,16 @@ class RAGAgent(BaseAgent):
         """
         contexts = []
         for vec_res in vector_results:
-            related = [gr for gr in graph_results if gr.metadata.get("original_node") == vec_res.node_id]
+            original_id = vec_res.ids[0][0]
+            related = [
+                gr for gr in graph_results
+                if gr.metadatas and gr.metadatas[0][0].get("original_node") == original_id
+            ]
+            score = vec_res.distances[0][0] if vec_res.distances else 0.0
             ctx = Context(
                 source_node=vec_res,
                 related_nodes=related,
-                combined_relevance=vec_res.score
+                combined_relevance=score
             )
             contexts.append(ctx)
         return contexts

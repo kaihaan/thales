@@ -19,10 +19,10 @@ class DummyGraphDatabase(GraphDatabase):
         for i, node_id in enumerate(node_ids):
             results.append(
                 SearchResult(
-                    node_id=f"graph_node_for_{node_id}",
-                    content=f"Dummy content for node connected to {node_id}",
-                    score=0.9,
-                    metadata={"source": "dummy_graph_db", "original_node": node_id}
+                    ids=[[f"graph_node_for_{node_id}"]],
+                    documents=[[f"Dummy content for node connected to {node_id}"]],
+                    metadatas=[[{"source": "dummy_graph_db", "original_node": node_id}]],
+                    distances=[[0.9]]
                 )
             )
         return results

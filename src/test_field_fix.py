@@ -5,7 +5,7 @@ Simple test to verify the Field issue is fixed
 
 from thales.agents import AgentOntology, AgentIdentity, AgentType
 
-def test_field_fix():
+def test_field_fix() -> bool:
     """Test that the Field issue is resolved"""
     print("Testing Field issue fix...")
     

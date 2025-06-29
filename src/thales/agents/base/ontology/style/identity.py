@@ -61,6 +61,6 @@ class AgentIdentity:
         """Get personality trait value"""
         return self.personality_traits.get(trait_name, 0.5)
     
-    def update_trait(self, trait_name: str, value: float):
+    def update_trait(self, trait_name: str, value: float) -> None:
         """Update personality trait (0.0 to 1.0)"""
         self.personality_traits[trait_name] = max(0.0, min(1.0, value))
