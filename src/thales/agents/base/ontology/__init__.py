@@ -8,10 +8,8 @@ from .base import AgentOntology
 
 __all__ = [
     # Identity
-    "AgentIdentity",
+    "Identity",
     "AgentType", 
-    "CommunicationStyle",
-    "DecisionStyle",
     
     # Goals
     "Goal",
@@ -19,13 +17,19 @@ __all__ = [
     "GoalStatus", 
     "TimeConstraint",
     
+    #Memory
+    "Memory",
+
+    #Imperatives
+    "Imperatives",
+
     # Tasks
     "Task",
     "TaskType",
     "TaskStatus",
     "RetryPolicy",
-    
-    # Main ontology
+
+    #Ontology
     "AgentOntology",
 
     #Imperatives

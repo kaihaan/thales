@@ -3,17 +3,16 @@ Logger for Thales project
 
 usage:
     # my_script.py
-    from log_config import get_logger
+    from thales.utils.logger import get_logger
 
     logger = get_logger(__name__)
-
-    if __name__ == "__main__":
-        logger.info("Logging is working")
+    logger.info("Logging is working")
+    logger.debug("Debug trace msg...")
 """
 
 from pathlib import Path
-import logging
 from logging.handlers import RotatingFileHandler
+import logging
 
 LOG_DIR = Path(__file__).resolve().parent.parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)        # create once
