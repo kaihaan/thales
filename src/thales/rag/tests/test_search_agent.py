@@ -6,7 +6,7 @@ from thales.rag.data.models import SearchResult, Context
 from thales.rag.graph.dummy import DummyGraphDatabase
 from thales.rag.vector.base import VectorStore
 from thales.agents.base.ontology.ontology import AgentOntology
-from thales.agents.base.ontology.style.identity import AgentIdentity, AgentType
+from thales.agents.base.ontology.identity import AgentIdentity, AgentType
 
 
 class FakeVectorStore(VectorStore):

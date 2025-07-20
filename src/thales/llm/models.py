@@ -1,7 +1,7 @@
 # src/thales/llm/models.py
 from pydantic import BaseModel, Field
 from typing import List
-from thales.agents.base.ontology.intentions.tasksClasses import TaskType # Import TaskType
+from thales.agents.base.ontology.intentions.Tasks import TaskType # Import TaskType
 
 class TaskOutput(BaseModel):
     """Pydantic model for a single decomposed task from LLM."""

@@ -3,15 +3,15 @@ Logger for Thales project
 
 usage:
     # my_script.py
-    from log_config import get_logger
+    from thales.utils.logger import get_logger
 
     logger = get_logger(__name__)
-
-    if __name__ == "__main__":
-        logger.info("Logging is working")
+    logger.info("Logging is working")
+    logger.debug("Debug trace msg...")
 """
 
 import logging
+from logging import Logger
 
 # Configure logging for development
 logging.basicConfig(
@@ -23,7 +23,7 @@ logging.basicConfig(
     ],
 )
 
-def get_logger(name: str):
+def get_logger(name: str) -> Logger:
     return logging.getLogger(name)
 
 

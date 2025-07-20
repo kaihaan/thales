@@ -1,12 +1,11 @@
-from .ontology import AgentIdentity, AgentType, CommunicationStyle, DecisionStyle, Goal, GoalType, GoalStatus, TimeConstraint, Task, TaskType, TaskStatus, RetryPolicy, AgentOntology
-from .base import BaseAgent, TaskResult
+from .ontology import AgentOntology, Identity, AgentType, Goal, GoalType, GoalStatus, TimeConstraint, Task, TaskType, TaskStatus, RetryPolicy
+
+from .baseAgent import BaseAgent, TaskResult
 
 __all__ = [
     # Identity
     "AgentIdentity",
-    "AgentType", 
-    "CommunicationStyle",
-    "DecisionStyle",
+    "AgentType",
     
     # Goals
     "Goal",

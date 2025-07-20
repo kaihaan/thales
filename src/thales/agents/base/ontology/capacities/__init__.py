@@ -1,7 +1,10 @@
 """Agent Ontology Package"""
 
-from .capacities import Identity, AgentType, Goal, GoalType, GoalStatus, TimeConstraint, Task, TaskType, TaskStatus, RetryPolicy, Memory, Imperatives
-from .Ontology import AgentOntology
+from .Identity import Identity, AgentType
+from .Goals import Goal, GoalType, GoalStatus, TimeConstraint
+from .Tasks import Task, TaskType, TaskStatus, RetryPolicy
+from .Memory import Memory
+from .Imperatives import Imperatives
 
 __all__ = [
     # Identity
@@ -25,7 +28,4 @@ __all__ = [
     "TaskType",
     "TaskStatus",
     "RetryPolicy",
-
-    #Ontology
-    "AgentOntology",
 ]
