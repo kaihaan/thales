@@ -84,7 +84,7 @@ class DocumentManagerLogger:
                              chunks: int,
                              duration: float,
                              success: bool = True,
-                             error: Optional[str] = None):
+                             error: Optional[str] = None) -> None:
         """
         Log document processing event.
         
@@ -119,7 +119,7 @@ class DocumentManagerLogger:
                           batch_size: int,
                           duration: float,
                           success_count: int,
-                          failed_count: int):
+                          failed_count: int) -> None:
         """
         Log batch processing completion.
         
@@ -146,7 +146,7 @@ class DocumentManagerLogger:
     
     def log_collection_created(self, 
                              collection_name: str,
-                             source_path: str):
+                             source_path: str) -> None:
         """
         Log collection creation.
         
@@ -167,7 +167,7 @@ class DocumentManagerLogger:
     def log_error(self, 
                  error_type: str,
                  message: str,
-                 details: Optional[dict] = None):
+                 details: Optional[dict[str, str]] = None) -> None:
         """
         Log an error with structured details.
         

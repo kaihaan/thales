@@ -6,9 +6,11 @@ Provides progress bars and status updates for CLI.
 
 from typing import Optional, Callable, Any
 import click
+from click._termui_impl import ProgressBar
 from datetime import datetime, timedelta
 import threading
 import time
+
 
 
 class ProgressTracker:
@@ -43,10 +45,10 @@ class ProgressTracker:
         
         self.processed = 0
         self.failed = 0
-        self.start_time = None
-        self.progress_bar = None
+        self.start_time: datetime | None = None
+        self.progress_bar: ProgressBar[int] | None = None
         
-    def start(self):
+    def start(self) -> None:
         """Start progress tracking."""
         self.start_time = datetime.now()
         self.progress_bar = click.progressbar(
@@ -58,7 +60,7 @@ class ProgressTracker:
         )
         self.progress_bar.__enter__()
         
-    def update(self, success: bool = True):
+    def update(self, success: bool = True) -> None:
         """
         Update progress.
         
@@ -73,7 +75,7 @@ class ProgressTracker:
         if self.progress_bar:
             self.progress_bar.update(1)
     
-    def finish(self):
+    def finish(self) -> None:
         """Finish progress tracking and show summary."""
         if self.progress_bar:
             self.progress_bar.__exit__(None, None, None)
@@ -82,7 +84,7 @@ class ProgressTracker:
             elapsed = datetime.now() - self.start_time
             self._show_summary(elapsed)
     
-    def _show_summary(self, elapsed: timedelta):
+    def _show_summary(self, elapsed: timedelta) -> None:
         """Show processing summary."""
         click.echo("\n" + "=" * 50)
         click.echo(f"Processing Complete")
@@ -116,15 +118,15 @@ class SpinnerProgress:
         self.message = message
         self.spinner_chars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
         self.running = False
-        self.thread = None
+        self.thread: threading.Thread | None = None
         
-    def start(self):
+    def start(self) -> None:
         """Start the spinner."""
         self.running = True
         self.thread = threading.Thread(target=self._spin)
         self.thread.start()
         
-    def _spin(self):
+    def _spin(self) -> None:
         """Spinner animation loop."""
         i = 0
         while self.running:
@@ -133,7 +135,7 @@ class SpinnerProgress:
             time.sleep(0.1)
             i += 1
             
-    def stop(self, final_message: Optional[str] = None):
+    def stop(self, final_message: Optional[str] = None) -> None:
         """
         Stop the spinner.
         
@@ -168,10 +170,10 @@ class BatchProgressTracker:
         self.total_batches = total_batches
         self.items_per_batch = items_per_batch
         self.current_batch = 0
-        self.batch_bar = None
-        self.item_bar = None
+        self.batch_bar: ProgressBar[int] | None = None
+        self.item_bar: ProgressBar[int] | None = None
         
-    def start(self):
+    def start(self) -> None:
         """Start batch tracking."""
         self.batch_bar = click.progressbar(
             length=self.total_batches,
@@ -180,7 +182,7 @@ class BatchProgressTracker:
         )
         self.batch_bar.__enter__()
         
-    def start_batch(self, batch_num: int, batch_size: int):
+    def start_batch(self, batch_num: int, batch_size: int) -> None:
         """
         Start tracking a new batch.
         
@@ -200,12 +202,12 @@ class BatchProgressTracker:
         )
         self.item_bar.__enter__()
         
-    def update_item(self):
+    def update_item(self) -> None:
         """Update item progress within current batch."""
         if self.item_bar:
             self.item_bar.update(1)
             
-    def finish_batch(self):
+    def finish_batch(self) -> None:
         """Finish current batch."""
         if self.item_bar:
             self.item_bar.__exit__(None, None, None)
@@ -214,7 +216,7 @@ class BatchProgressTracker:
         if self.batch_bar:
             self.batch_bar.update(1)
             
-    def finish(self):
+    def finish(self) -> None:
         """Finish all tracking."""
         if self.item_bar:
             self.item_bar.__exit__(None, None, None)

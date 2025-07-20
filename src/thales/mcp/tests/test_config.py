@@ -4,7 +4,7 @@ test script for EnhancedMCPClient
 
 from thales.mcp.server import MCPServerManager, MCPServerConfig
 
-def test_config_manager():
+def test_config_manager() -> None:
     """ Test MCPServerManager """
     print("🧪 Testing MCP Configuration Manager")
     print("=" * 50)

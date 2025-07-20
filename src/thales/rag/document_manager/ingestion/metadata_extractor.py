@@ -90,7 +90,7 @@ class MetadataExtractor:
     
     def _extract_folder_metadata(self, path: Path) -> Dict[str, Any]:
         """Extract folder hierarchy as metadata."""
-        metadata = {}
+        metadata: dict[str, int | str] = {}
         
         try:
             relative = path.relative_to(self.base_path)
@@ -118,27 +118,28 @@ class MetadataExtractor:
         Looks for metadata files in the same directory and parent directories.
         
         TODO:
+        - impliment this
         - Merge metadata from multiple levels
         - Support YAML format
         - Cache loaded metadata
         """
-        import json
+        # import json
         
         # Check same directory
-        metadata_file = file_path.parent / '.metadata.json'
-        if metadata_file.exists():
-            try:
-                with open(metadata_file, 'r') as f:
-                    data = json.load(f)
+        # metadata_file = file_path.parent / '.metadata.json'
+        # if metadata_file.exists():
+        #     try:
+        #         with open(metadata_file, 'r') as f:
+        #             metadata = json.load(f)
                     
-                # Check if there's file-specific metadata
-                filename = file_path.name
-                if filename in data:
-                    return data[filename]
-                elif 'default' in data:
-                    return data['default']
-            except Exception:
-                pass
+        #         # Check if there's file-specific metadata
+        #         filename = file_path.name
+        #         if filename in data:
+        #             return data[filename]
+        #         elif 'default' in data:
+        #             return data['default']
+        #     except Exception:
+        #         pass
         
         return None
     
@@ -153,7 +154,7 @@ class MetadataExtractor:
         - Truncate long strings
         - Remove null values
         """
-        cleaned = {}
+        cleaned: dict[str, str | int | float | bool ] = {}
         
         for key, value in metadata.items():
             # Skip None values
@@ -161,7 +162,7 @@ class MetadataExtractor:
                 continue
             
             # Convert to string if needed
-            if isinstance(value, (int, float, bool)):
+            if isinstance(value, (str, int, float, bool)):
                 cleaned[key] = value
             elif isinstance(value, datetime):
                 cleaned[key] = value.isoformat()
@@ -213,7 +214,7 @@ class MetadataExtractor:
         
         # Simple keyword extraction (word frequency)
         words = text.lower().split()
-        word_freq = {}
+        word_freq: dict[str, int] = {}
         for word in words:
             if len(word) > 5:  # Simple filter
                 word_freq[word] = word_freq.get(word, 0) + 1

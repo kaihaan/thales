@@ -130,7 +130,7 @@ class SemanticChunker(ChunkingStrategy):
         paragraphs = re.split(r'\n\s*\n', text)
         
         chunks = []
-        current_chunk = []
+        current_chunk: list[str] = []
         current_size = 0
         chunk_index = 0
         start_char = 0

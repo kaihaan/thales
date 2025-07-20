@@ -9,6 +9,12 @@ Usage:
     - execute_tool(self, server_name: str, tool_name: str, args: Dict[str, Any]) -> CallToolResult
     - interactive_mode(self) -> None
 
+    NOTE: tool selection strategy
+    TODO Need to explore a basic use-case of allowing teh agent to use a given tool from the MCP Server first
+    TODO MCPServerManager allows creation of tool sets
+    TODO MCP Client should allow caller to choose a tool-set, or define a list of named tools, or a default set
+    TODO Also offer an LLM tool to choose from all known tools on basis of Agent Purpose
+    TODO Also offer LLM too to find best-fit tool from all known tools, given query (if no suitable tool already found)
 """
 
 import asyncio
@@ -174,16 +180,26 @@ class EnhancedMCPClient:
         
         return found if found.tools else None
 
+    # TODO impliment
+    def get_tool_set(self, tool_set: str) -> ListToolsResult | None:
+        tools = self.server_manager.get_tool_set(tool_set)
+        return tools
+
+
     async def execute_tool(
         self, server_name: str, tool_name: str, args: dict[str, Any],
     ) -> CallToolResult:
         """Execute a tool on a specific server"""
+
+        #TODO re-write this to call tool by name, without needing server name
         if server_name not in self.sessions:
             logger.debug(
                 f"Error - Can't execute tool because not connected to {server_name}"
             )
             raise ValueError(f"Not connected to {server_name}")
 
+        #
+        
         session = self.sessions[server_name]
         try:
             print(f"Calling {tool_name} on server {server_name}")

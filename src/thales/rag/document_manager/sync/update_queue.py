@@ -23,7 +23,7 @@ class QueueItem:
     added_time: datetime = field(default_factory=datetime.now)
     error: Optional[str] = None
     
-    def __lt__(self, other):
+    def __lt__(self, other: "QueueItem") -> bool:
         """For priority queue comparison."""
         return self.priority < other.priority
 
@@ -51,10 +51,10 @@ class UpdateQueue:
         - Add queue size limits
         - Implement dead letter queue
         """
-        self.queue = PriorityQueue()
-        self.processing = {}  # Track items being processed
-        self.failed = []  # Failed items
-        self.completed = []  # Completed items
+        self.queue: PriorityQueue[QueueItem] = PriorityQueue()
+        self.processing: dict[str, QueueItem] = {}  # Track items being processed
+        self.failed: list[QueueItem] = []  # Failed items
+        self.completed: list[QueueItem] = []  # Completed items
         self.max_retries = max_retries
         self.lock = threading.Lock()
     
@@ -97,7 +97,7 @@ class UpdateQueue:
         - Group by collection for efficiency
         - Consider document size in batching
         """
-        batch = []
+        batch: list[QueueItem] = []
         
         with self.lock:
             while len(batch) < batch_size and not self.queue.empty():

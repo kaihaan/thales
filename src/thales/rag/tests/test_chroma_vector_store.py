@@ -42,7 +42,7 @@ def chroma_store() -> Generator[ChromaVectorStore, Any, Any]:
     store.client.reset()
 
 
-def test_add_docs(chroma_store) -> None:
+def test_add_docs(chroma_store: ChromaVectorStore) -> None:
     """Tests adding docs to the store."""
 
     chroma_store.add_documents_sync(docs, tags)
@@ -52,15 +52,17 @@ def test_add_docs(chroma_store) -> None:
     
 
 
-def test_similarity_search(chroma_store) -> None:
+def test_similarity_search(chroma_store: ChromaVectorStore) -> None:
     """Tests basic similarity search."""
     chroma_store.add_documents_sync(docs, tags)
     results = chroma_store.similarity_search_sync("celestial body", k=1)
-    assert len(results.ids[0]) == 1
-    assert any("moon" in s.casefold() for row in results.documents for s in row)
+    assert results.documents
+    if results.documents:
+        assert len(results.ids[0]) == 1
+        assert any("moon" in s.casefold() for row in results.documents for s in row)
 
 
-def test_similarity_search_with_tag_filter(chroma_store) -> None:
+def test_similarity_search_with_tag_filter(chroma_store: ChromaVectorStore) -> None:
     """Tests similarity search with a tag filter."""
     chroma_store.add_documents_sync(docs, tags)
     results = chroma_store.similarity_search_sync("natural phenomena", k=2, metadata={"daypart": "day"})
@@ -68,15 +70,17 @@ def test_similarity_search_with_tag_filter(chroma_store) -> None:
 
 
 
-def test_similarity_search_with_multiple_tags(chroma_store) -> None:
+def test_similarity_search_with_multiple_tags(chroma_store: ChromaVectorStore) -> None:
     """Tests similarity search with multiple tags."""
     chroma_store.add_documents_sync(docs, tags)
     results = chroma_store.similarity_search_sync("hot thing", k=1, metadata={"daypart": "day", "temp": "hot"})
-    assert len(results.ids[0]) == 1
-    assert any("sun" in s.casefold() for row in results.documents for s in row)
+    assert results.documents
+    if results.documents:
+        assert len(results.ids[0]) == 1
+        assert any("sun" in s.casefold() for row in results.documents for s in row)
 
 
-def test_similarity_search_no_results(chroma_store) -> None:
+def test_similarity_search_no_results(chroma_store: ChromaVectorStore) -> None:
     """Tests a search that should return no results."""
     chroma_store.add_documents_sync(docs, tags)
     results = chroma_store.similarity_search_sync("nonexistent", k=1, metadata={"nonexistent_tag": "Nonexistand"})

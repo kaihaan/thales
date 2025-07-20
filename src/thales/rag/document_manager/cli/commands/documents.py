@@ -13,7 +13,7 @@ from ..config import load_config
 
 
 @click.group()
-def documents():
+def documents() -> None:
     """Manage documents within collections."""
     pass
 
@@ -22,7 +22,7 @@ def documents():
 @click.option('--collection', '-c', required=True, help='Collection name')
 @click.option('--filter', '-f', help='Filter by file pattern (e.g., *.pdf)')
 @click.option('--limit', '-l', type=int, default=50, help='Maximum documents to show')
-def list(collection: str, filter: Optional[str], limit: int):
+def list(collection: str, filter: Optional[str], limit: int) -> None:
     """
     List documents in a collection.
     
@@ -58,7 +58,7 @@ def list(collection: str, filter: Optional[str], limit: int):
 
 @documents.command()
 @click.argument('document_path')
-def reindex(document_path: str):
+def reindex(document_path: str) -> None:
     """
     Force re-indexing of a specific document.
     
@@ -87,7 +87,7 @@ def reindex(document_path: str):
 @click.option('--collection', '-c', help='Filter by collection')
 @click.option('--status', '-s', type=click.Choice(['all', 'failed', 'pending']), 
               default='failed', help='Filter by status')
-def errors(collection: Optional[str], status: str):
+def errors(collection: Optional[str], status: str) -> None:
     """
     Show documents with processing errors.
     

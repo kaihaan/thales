@@ -9,10 +9,11 @@ from typing import List, Dict, Any, Optional
 import chromadb
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+from chromadb.api.types import EmbeddingFunction 
 import uuid
 
 from ...vector.chroma_impl import ChromaVectorStore
-
 
 class CollectionManager:
     """
@@ -50,7 +51,7 @@ class CollectionManager:
         )
         
         # Create embedding function
-        self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+        self.embedding_function: SentenceTransformerEmbeddingFunction = embedding_functions.SentenceTransformerEmbeddingFunction(
             model_name=embedding_model
         )
     
@@ -78,7 +79,7 @@ class CollectionManager:
         
         return self.client.get_or_create_collection(
             name=name,
-            embedding_function=self.embedding_function,
+            embedding_function=self.embedding_function,  # type: ignore[arg-type]
             metadata=collection_metadata
         )
     
@@ -115,7 +116,7 @@ class CollectionManager:
         try:
             return self.client.get_collection(
                 name=name,
-                embedding_function=self.embedding_function
+                embedding_function=self.embedding_function  # type: ignore[arg-type]
             )
         except ValueError:
             return None
@@ -259,7 +260,7 @@ class CollectionManager:
         - Add usage examples
         - Export to file
         """
-        manifest = {
+        manifest: dict[str, Any] = {
             "chroma_path": str(self.chroma_path),
             "embedding_model": self.embedding_model,
             "collections": {}

@@ -11,10 +11,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from thales.mcp.client import EnhancedMCPClient
 
 class MCPToolTester:
-    def __init__(self):
+    def __init__(self)  -> None:
         self.client = EnhancedMCPClient()
 
-    async def test_math_operations(self):
+    async def test_math_operations(self) -> None:
         """Test math server operations using EnhancedMCPClient"""
         print("\n🧮 Testing Math Server Operations")
         print("=" * 50)
@@ -53,7 +53,7 @@ class MCPToolTester:
         except Exception as e:
             print(f"❌ Math server test failed: {e}")
 
-    async def test_filesystem_operations(self):
+    async def test_filesystem_operations(self) -> None:
         """Test filesystem server operations using EnhancedMCPClient"""
         print("\n📁 Testing Filesystem Server Operations")
         print("=" * 50)
@@ -144,7 +144,7 @@ class MCPToolTester:
         except Exception as e:
             print(f"❌ Filesystem server test failed: {e}")
 
-    async def test_client_features(self):
+    async def test_client_features(self) -> None:
         """Test EnhancedMCPClient specific features"""
         print("\n🔧 Testing EnhancedMCPClient Features")
         print("=" * 50)
@@ -163,7 +163,7 @@ class MCPToolTester:
             print(f"  {status} {name}: {config.description}")
 
 
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """Clean up using EnhancedMCPClient"""
         print("\n🧹 Cleaning up...")
         
@@ -203,7 +203,7 @@ class MCPToolTester:
 
 
 
-async def run_comprehensive_test():
+async def run_comprehensive_test() -> None:
     """Run all MCP tool tests using EnhancedMCPClient"""
     print("🚀 MCP Tool Execution Test Suite (Using EnhancedMCPClient)")
     print("=" * 70)

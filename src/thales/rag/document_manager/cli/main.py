@@ -15,7 +15,7 @@ from typing import Optional
 
 @click.group()
 @click.version_option(version="0.1.0")
-def cli():
+def cli() -> None:
     """RAG Document Manager - Ingest and manage document collections."""
     pass
 
@@ -33,7 +33,7 @@ cli.add_command(status.queue)
 cli.add_command(status.logs)
 
 
-def main():
+def main() -> None:
     """Main entry point for the CLI."""
     cli()
 

@@ -16,7 +16,7 @@ from ..config import load_config
 @click.command()
 @click.option('--watch', '-w', is_flag=True, help='Continuously monitor status')
 @click.option('--interval', '-i', type=int, default=5, help='Update interval in seconds')
-def status(watch: bool, interval: int):
+def status(watch: bool, interval: int) -> None:
     """
     Show current processing status.
     
@@ -28,7 +28,7 @@ def status(watch: bool, interval: int):
     - Implement watch mode
     - Display progress bars
     """
-    def show_status():
+    def show_status() -> None:
         click.clear()
         click.echo("Document Manager Status")
         click.echo("=" * 60)
@@ -73,13 +73,13 @@ def status(watch: bool, interval: int):
 
 
 @click.group()
-def queue():
+def queue() -> None:
     """Manage the processing queue."""
     pass
 
 
 @queue.command()
-def list():
+def list() -> None:
     """
     List documents in the processing queue.
     
@@ -109,7 +109,7 @@ def list():
 
 @queue.command()
 @click.confirmation_option(prompt='Are you sure you want to clear the queue?')
-def clear():
+def clear() -> None:
     """
     Clear the processing queue.
     
@@ -132,7 +132,7 @@ def clear():
 @click.option('--level', '-l', 
               type=click.Choice(['DEBUG', 'INFO', 'WARNING', 'ERROR']),
               default='INFO', help='Log level filter')
-def logs(tail: int, follow: bool, level: str):
+def logs(tail: int, follow: bool, level: str) -> None:
     """
     View processing logs.
     

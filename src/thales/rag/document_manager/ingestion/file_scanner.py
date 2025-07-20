@@ -113,7 +113,7 @@ class FileScanner:
         - Add size statistics
         - Cache results
         """
-        counts = {}
+        counts: dict[str, int] = {}
         for doc in self.scan():
             counts[doc.collection_name] = counts.get(doc.collection_name, 0) + 1
         return counts

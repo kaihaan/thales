@@ -9,7 +9,7 @@ from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from datetime import datetime
 
-from thales.agents.base.ontology import AgentOntology, Goal, Task, GoalStatus, TaskStatus
+from thales.agents.base import AgentOntology, Goal, Task, GoalStatus, TaskStatus
 from thales.mcp.client import EnhancedMCPClient
 from thales.utils import get_logger
 from thales.llm.client import OpenAIClient

@@ -19,7 +19,7 @@ from ..config import load_config
 @click.option('--config', '-c', type=click.Path(exists=True),
               help='Path to configuration file')
 @click.option('--dry-run', is_flag=True, help='Preview what would be processed')
-def ingest(path: str, config: Optional[str], dry_run: bool):
+def ingest(path: str, config: Optional[str], dry_run: bool) -> None:
     """
     Perform initial ingestion of a document library.
     
@@ -50,7 +50,7 @@ def ingest(path: str, config: Optional[str], dry_run: bool):
 @click.option('--path', '-p', required=True, type=click.Path(exists=True),
               help='Path to document library')
 @click.option('--force', '-f', is_flag=True, help='Force re-processing of all documents')
-def update(path: str, force: bool):
+def update(path: str, force: bool) -> None:
     """
     Update existing collections with new or changed documents.
     

@@ -53,12 +53,12 @@ Expected Usage:
 
 import aiosqlite
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from mcp.types import Tool
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, NewType
-from uuid import UUID, uuid4
+from uuid import uuid4
 from thales.mcp.client import EnhancedMCPClient
 
 
@@ -99,18 +99,13 @@ class _Knowledge:
     Central hub for an agent's knowledge, with persistent knowledge store and a dynamic registry for knowledge-retrieval tools.
     """
 
-    db_path: str
-    actor_id: str
-    mcp: EnhancedMCPClient
-    sessions: Dict[SessionID, SessionRecord] = field(default_factory=dict)
-    messages: Dict[SessionID, List[LLMMsg]] = field(default_factory=dict)
     innate: dict[str, Any] | None = None
     _db_conn: aiosqlite.Connection | None = None
 
     def __init__(self, db_path: str, actor_id: str, mcp: EnhancedMCPClient) -> None:
-        self.db_path = db_path
-        self.actor_id = actor_id
-        self.mcp = mcp
+        self.db_path: str = db_path
+        self.actor_id: str = actor_id
+        self.mcp: EnhancedMCPClient = mcp
         self.tools: Dict[str, Tool] = {}
         self.sessions: Dict[SessionID, SessionRecord] = {}
         self.messages: Dict[SessionID, List[LLMMsg]] = {}
@@ -247,19 +242,14 @@ class _Knowledge:
             pass
         self.tools[tool.name] = tool
 
-    async def discover_and_add_tools(self, query: str) -> None:
+    # TODO make this search for a 'knowledge tools' set - managed by MCPServerManager
+    def get_knowledge_tools(self) -> None:
         """Uses the MCP client to find and register tools relevant to a query."""
-        found_tools = await self.mcp.discover_and_add_tools()
-        for tool in found_tools:
-            self.register_tool(tool)
-
-    async def use_tool(self, name: str, query: str) -> str:
-        """Executes a registered tool by its name."""
-        if name not in self.tools:
-            raise ValueError(f"Tool '{name}' is not registered.")
-        tool = self.tools[name]
-        result = await tool.run(query=query)
-        return str(result)
+        knowledge_tools = self.mcp.get_tool_set("knowledge")
+        # TODO guard against tools being entered twice
+        if knowledge_tools and knowledge_tools.tools:
+            for tool in knowledge_tools.tools:
+                self.register_tool(tool)
 
 
 async def main()->None:

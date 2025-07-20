@@ -40,7 +40,7 @@ class DocumentTracker:
         
         self._init_database()
     
-    def _init_database(self):
+    def _init_database(self) -> None:
         """Initialize database schema."""
         with sqlite3.connect(str(self.db_path)) as conn:
             cursor = conn.cursor()
@@ -195,7 +195,7 @@ class DocumentTracker:
         - Add file pattern filtering
         - Handle moved files
         """
-        changes = {
+        changes: dict[str, list[Any]] = {
             'new': [],
             'modified': [],
             'deleted': []

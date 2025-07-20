@@ -1,9 +1,22 @@
-"""MCP Server Configuration Management"""
+"""
+MCP Server Manager - manages list of known MCP Servers & tools for Local MCP Clients
+- list_configured_servers(self) -> dict[str, MCPServerConfig]
+- get_server(self, name: str) -> MCPServerConfig
+- add_server(self, config: MCPServerConfig) -> bool
+
+NOTE: tool discovery strategy
+Allo curated colelctions of tools to be defined.
+Agents can then be set up with tools = None | default-set | curated-set | [set of named-tools]
+TODO Add get_known_tools
+TODO Add get_tool_sets, create_tool_set, delete_tool_set
+ 
+
+"""
 
 import os
 from typing import Dict, List, Optional
 from dataclasses import dataclass
-
+from mcp.types import ListToolsResult
 
 @dataclass
 class MCPServerConfig:
@@ -60,3 +73,8 @@ class MCPServerManager:
             raise ValueError(f"Server name already exists: {config.name}.")
         self.servers[config.name] = config
         return True
+    
+    # TODO implement
+    def get_tool_set(self, tool_set: str) -> ListToolsResult | None:
+        tools: ListToolsResult | None = None
+        return tools

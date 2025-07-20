@@ -11,7 +11,7 @@ from thales.agents import (
     Goal, GoalType, GoalStatus, TimeConstraint
 )
 
-async def create_test_agent():
+async def create_test_agent() -> BaseAgent:
     """Create a test agent for manual testing"""
     
     # Create agent identity
@@ -43,7 +43,7 @@ async def create_test_agent():
     
     return agent
 
-async def test_math_goal(agent):
+async def test_math_goal(agent: BaseAgent) -> None:
     """Test mathematical calculation goal"""
     print("\nTesting Math Goal")
     print("=" * 40)
@@ -83,7 +83,7 @@ async def test_math_goal(agent):
     # result = await agent.execute_goal(goal)
     # print(f"Goal execution result: {result}")
 
-async def test_file_goal(agent):
+async def test_file_goal(agent: BaseAgent) -> None:
     """Test file operation goal"""
     print("\nTesting File Goal")
     print("=" * 40)
@@ -114,7 +114,7 @@ async def test_file_goal(agent):
     for task in tasks:
         print(f"  - {task.action}: {task.description}")
 
-async def test_agent_status(agent):
+async def test_agent_status(agent: BaseAgent) -> None:
     """Test agent status reporting"""
     print("\nAgent Status")
     print("=" * 40)
@@ -131,7 +131,7 @@ async def test_agent_status(agent):
     # print(f"Agent running: {status['is_running']}")
     # print(f"Connected servers: {status['connected_servers']}")
 
-async def main():
+async def main() -> None:
     """Main test function"""
     print("🚀 BaseAgent Manual Test Suite")
     print("=" * 50)
